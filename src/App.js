@@ -1,24 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import { Login } from "./Components/Authentication/Login";
+import { Signup } from "./Components/Authentication/Signup";
+import { HomeWrapper } from "./Components/Main/Home";
+export const GlobalContext = React.createContext();
 
 function App() {
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <GlobalContext.Provider value={{ toast, setToast }}>
+      <Routes>
+        <Route path="/home/*" element={<HomeWrapper />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </GlobalContext.Provider>
   );
 }
 
