@@ -4,5 +4,8 @@ flask-marshmallow==0.15.0
 Flask-RESTful==0.3.9
 Flask-SQLAlchemy==3.0.3
 marshmallow==3.19.0
-python-dotenv==1.0.0
+python-dotenv
 SQLAlchemy==2.0.9
+flask-jwt-extended
+requests
+psycopg2
