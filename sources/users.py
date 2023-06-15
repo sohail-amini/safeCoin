@@ -4,15 +4,15 @@ from dbconfig import db
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-class Users(db.Model):
-    __table_name__ = "users"
+class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
     email = db.Column(db.String(255))
 
     def check_password(self, pwdd):
-        pwd = Users.query.filter_by(password=pwdd).first()
+        pwd = User.query.filter_by(password=pwdd).first()
         return pwd    
 
 __name__ = "__users__"
@@ -21,7 +21,7 @@ users_bp = Blueprint("users", __name__)
 @users_bp.route("/register", methods=["POST"])
 def create_user():
     json = request.get_json()
-    user = Users()
+    user = User()
     for key, value in request.json.items():
         setattr(user, key, value)
     save_to_db(user)
@@ -38,7 +38,7 @@ def create_user():
 @users_bp.route("/login", methods=["POST"])
 def login():
     json = request.get_json()
-    user = Users.query.filter_by(username=json["username"]).first()
+    user = User.query.filter_by(username=json["username"]).first()
     email = json["username"]
     password = json["password"]
     

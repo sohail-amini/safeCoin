@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash
 import jwt
 from sqlalchemy import Column, Date
 from helpers import save_to_db
-from sources.users import Users
+from sources.users import User
 
 class Transfer(db.Model):
     __table_name__ = "transfer"
