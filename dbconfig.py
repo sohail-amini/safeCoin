@@ -2,6 +2,7 @@ import os
 import urllib.parse
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 
 db = SQLAlchemy()
 
@@ -16,7 +17,7 @@ def config(app):
     port = os.getenv("DB_PORT")
     user = os.getenv("DB_USER")
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://safecoin_user:5l6itOHTqLZe8JURdUnjy2AqNTZWwdmd@dpg-ci5ml65ph6eh6mp9s0rg-a.oregon-postgres.render.com/safecoin"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://safecoin_user:5l6itOHTqLZe8JURdUnjy2AqNTZWwdmd@dpg-ci5ml65ph6eh6mp9s0rg-a.oregon-postgres.render.com/safecoin"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     # TODO It allow to your packages to show their exceptions
     app.config["PROPAGATE_EXCEPTIONS"] = True
