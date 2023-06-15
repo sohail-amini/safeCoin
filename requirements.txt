@@ -6,3 +6,4 @@ Flask-SQLAlchemy==3.0.3
 marshmallow==3.19.0
 python-dotenv
 SQLAlchemy==2.0.9
+flask-jwt-extended
