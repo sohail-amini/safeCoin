@@ -7,6 +7,8 @@ from sources.users import users_bp
 from sources.investment import investment_bp
 from sources.transfer import transfer_bp
 from sources.payments import payment_bp
+from sources.products import product_bp
+from sources.invoice import invoice_bp
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 
@@ -26,6 +28,8 @@ app.register_blueprint(users_bp)
 app.register_blueprint(investment_bp)
 app.register_blueprint(transfer_bp)
 app.register_blueprint(payment_bp)
+app.register_blueprint(product_bp)
+app.register_blueprint(invoice_bp)
 
 db.init_app(app)
 
