@@ -15,15 +15,16 @@ export const Signup = () => {
 
     const register = async (e) => {
         e.preventDefault()
-        
+
         await axios.post(`${AppSettings.APIserver}/register`, userData)
-        .then(res => {
-            if (res.data.status === "success") {
-                localStorage.setItem("user_id", userData.username)
-                navigate("/home")
-            }
-        })
-        .catch(e => console.log(e))
+            .then(res => {
+                if (res.data.status === "success") {
+                    localStorage.setItem("username", res.data.username)
+                    localStorage.setItem("token", res.data.token)
+                    navigate("/home")
+                }
+            })
+            .catch(e => console.log(e))
     }
 
     return (
@@ -76,6 +77,8 @@ export const Signup = () => {
                         required
                         shadow
                         type="password"
+                        value={userData.password}
+                        onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                     />
                 </div>
                 <div className="flex items-center gap-2">

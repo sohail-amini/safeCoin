@@ -1,31 +1,46 @@
-import React, {useState, useContext} from 'react'
+import React, { useState, useContext } from 'react'
 // import {Label} from 'react'
 import { Label, Button, TextInput, Checkbox, Spinner } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom'
 import AppSettings from '../../app.settings.json'
 import axios from 'axios'
-import {Toast} from '../Helpers/Toast'
-import {GlobalContext}from '../../App'
+import { Toast } from '../Helpers/Toast'
+import { GlobalContext } from '../../App'
 
 export const Login = () => {
-    const {toast, setToast} = useContext(GlobalContext)
+    const { setPendingTransfer, setPendingTransferInfo, setToast } = useContext(GlobalContext)
     const [loader, setLoader] = useState(false)
     const [userData, setUserData] = useState({
-        email: "",
+        username: "",
         password: ""
     })
-    
+
     const navigate = useNavigate()
-    const login = async  (e) => {
+    const login = async (e) => {
         e.preventDefault()
         setLoader(true)
         await axios.post(`${AppSettings.APIserver}/login`, userData).then(res => {
-            if (res.status === 200) navigate("/home")
+            console.log(res)
+            if (res.status === 200) {
+                localStorage.setItem("username", res.data.username)
+                localStorage.setItem("token", res.data.token)
+                axios(`${AppSettings.APIserver}/latest_pending_transfer/${localStorage.getItem("username")}`)
+                    .then(res => {
+                        if (res.data.status === "pending") {
+                            setPendingTransfer(true)
+                            setPendingTransferInfo(res.data)
+                        }
+                    })
+                    .catch(e => console.log(e))
+
+                navigate("/home")
+            }
             setLoader(false)
         }).catch(e => {
             setLoader(false)
+            console.log(e)
             setToast({
-                show:true,
+                show: true,
                 message: e.response.data.message
             })
         })
@@ -38,17 +53,17 @@ export const Login = () => {
                 <div>
                     <div className="mb-2 block">
                         <Label
-                            htmlFor="email1"
-                            value="Your email"
+                            htmlFor="username"
+                            value="Username"
                         />
                     </div>
                     <TextInput
-                        id="email1"
-                        placeholder="name@flowbite.com"
+                        id="username"
+                        placeholder="Username"
                         required
-                        type="email"
-                        value={userData.email}
-                        onChange={(e) => setUserData({...userData, email: e.target.value})}
+                        type="text"
+                        value={userData.username}
+                        onChange={(e) => setUserData({ ...userData, username: e.target.value })}
                     />
                 </div>
                 <div>
@@ -63,7 +78,7 @@ export const Login = () => {
                         required
                         type="password"
                         value={userData.password}
-                        onChange={(e) => setUserData({...userData, password: e.target.value})}
+                        onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                     />
                 </div>
                 <div className="flex items-center justify-between ">
@@ -80,10 +95,14 @@ export const Login = () => {
                 </div>
                 <Button type="submit" disabled={loader} >
                     {!loader ? <span>Submit</span> :
-                    <Spinner aria-label="Default status example" />
+                        <Spinner aria-label="Default status example" />
                     }
 
                 </Button>
+                <div>
+                    <span onClick={() => navigate("/signup")} className="text-sm text-gray-600 cursor-pointer inline">Create Account</span>
+                </div>
+
             </form>
         </div>
     )

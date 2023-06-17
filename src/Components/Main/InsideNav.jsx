@@ -1,24 +1,37 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { useLocation } from 'react-router-dom'
+import { GlobalContext } from '../../App'
 export const InsideNav = ({ name }) => {
-    const navigate = useNavigate()
+
+    const { prices, pendingTransfer } = useContext(GlobalContext);
+    const location = useLocation()
+
     return (
-        <nav class="flex mt-2 ml-2" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 ">
-                <li class="inline-flex items-center" onClick={() => navigate("/home")}>
-                    <a href="#" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+        <nav className="flex flex-col space-y-2" aria-label="Breadcrumb">
+            <div className="block grid grid-cols-4 text-center">
+                <span className="py-4 px-2 text-base bg-blue-100 text-blue-800 font-medium mr-2 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Bitcoin: ${prices.btc}
+                </span>
+                <span className="bg-gray-100 text-gray-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-gray-700 dark:text-gray-300">
+                    Ethereum: ${prices.eth}
+                </span>
+                <span className="bg-red-100 text-red-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-red-900 dark:text-red-300">
+                    BNB ${prices.bnb}
+                </span>
+                <span className="bg-green-100 text-green-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-green-900 dark:text-green-300">
+                    XRP ${prices.xrp}
+                </span>
+            </div>
+            {
+                pendingTransfer && (location.pathname !== "/home" && location.pathname !== "/home/invest") &&
+                <div className="w-3/5 mt-4 p-4 mb-4 text-base text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                    <span className="font-medium">Warning!</span> Please upgrade your level.
+                </div>
+            }
 
-                        Home
-                    </a>
-                </li>
 
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        / {/* <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg> */}
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2 dark:text-gray-400">{name}</span>
-                    </div>
-                </li>
-            </ol>
+
+
         </nav>
     )
 }
