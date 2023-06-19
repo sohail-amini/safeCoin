@@ -61,11 +61,10 @@ def create_payment(pk):
     url = 'https://www.blockonomics.co/api/new_address'
     headers = {'Authorization': "Bearer " + "E9MYfzValcohfTq2jBh8o7DLukXsRzMQY2slYVypGhM"}
     r = requests.post(url, headers=headers)
-    print(r.json())
     if r.status_code == 200:
         address = r.json()['address']
         bits = exchange_rate(product.price)
-        print(bits)
+        print("btcvalue=:", bits*1e8)
         order_id = str(uuid.uuid1())
         invoice = Invoice(order_id=order_id, address=address, btcvalue=bits*1e8, status=-1)
         product.invoices.append(invoice)
@@ -77,7 +76,6 @@ def create_payment(pk):
             "bits": bits
         })
     else:
-        print(r.status_code, r.text)
         return jsonify({"error": "Some Error, Try Again!"})
 
 @invoice_bp.route("/receive_payment", methods=["GET"])

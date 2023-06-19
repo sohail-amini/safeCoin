@@ -54,7 +54,6 @@ def create_investment():
     try:
         json = request.get_json()
         invest = Investment()
-        print("invest")
         for key, value in request.json.items():
                 setattr(invest, key, value)
         save_to_db(invest)

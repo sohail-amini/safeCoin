@@ -16,7 +16,6 @@ def create_bitcoin_payment():
         "callback": "https://chat.openai.com/"
     }
     response = requests.post(url, headers=headers, json=data)
-    print(response)
     return "Hello"
 # def create_bitcoin_payment(api_key, amount, callback_url):
 

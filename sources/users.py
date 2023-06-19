@@ -10,6 +10,8 @@ class User(db.Model):
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
     email = db.Column(db.String(255))
+    balance = db.Column(db.Float(precision='double'))
+    account_type = db.Column(db.String(255))
 
     def check_password(self, pwdd):
         pwd = User.query.filter_by(password=pwdd).first()
@@ -22,18 +24,42 @@ users_bp = Blueprint("users", __name__)
 def create_user():
     json = request.get_json()
     user = User()
+    found_username = User.query.filter_by(username=json['username']).first()
+    found_email = User.query.filter_by(email=json['email']).first()
+    
+    if found_email:
+        return jsonify({"key": "email_is_taken"}), 200
+
+    if found_username:
+        return jsonify({"key": "username_is_taken"}), 200
+
     for key, value in request.json.items():
         setattr(user, key, value)
+        
+    setattr(user, 'balance', 8)
+    setattr(user, 'account_type', "Basic")
+
     save_to_db(user)
     
     access_token = create_access_token(identity=user.username)
 
     return jsonify({
-            "status": "success", 
-            "result": "user added", 
-            "token": access_token, 
-            'username': user.username 
-        }), 200
+        "key": "success", 
+        "result": "user added", 
+        "token": access_token,
+        "id": user.id, 
+        'username': user.username,
+        "account_type": user.account_type 
+    }), 200
+
+@users_bp.route("/check_balance/<int:user_id>")
+def check_balance(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        balance = user.balance
+        return jsonify({'balance': round(balance, 2)})
+    else:
+        return jsonify({'message': 'User not found'})
 
 @users_bp.route("/login", methods=["POST"])
 def login():
@@ -48,7 +74,8 @@ def login():
             response = {
                 'id': user.id,
                 'username': user.username,
-                'email': user.email
+                'email': user.email,
+                "account_type": user.account_type 
             }
             access_token = create_access_token(identity=user.username)
             response["token"] = access_token
@@ -66,7 +93,6 @@ def check_logged_in():
     logged_in = False
     if 'username' in session:
         logged_in = True
-    print("logged_in", logged_in)
     # Return the logged-in status as a JSON response
     return jsonify({'logged_in': logged_in})
 
