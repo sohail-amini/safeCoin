@@ -1,35 +1,76 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Label, Button, TextInput, Checkbox } from 'flowbite-react';
 import AppSettings from '../../app.settings.json'
 import axios from 'axios'
+import { Toast } from '../Helpers/Toast'
+import { GlobalContext } from '../../App'
 
 export const Signup = () => {
+
     const navigate = useNavigate()
     const [userData, setUserData] = useState({
         username: "",
         email: "",
         password: ""
     })
+    const [errorInfo, setErrorInfo] = useState({
+        status: false,
+        message: ""
+    })
+    const [emailError, setEmailErorr] = useState({
+        status: false,
+        message: ""
+    })
+    const { setToast } = useContext(GlobalContext)
 
 
     const register = async (e) => {
         e.preventDefault()
 
-        await axios.post(`${AppSettings.APIserver}/register`, userData)
-            .then(res => {
-                if (res.data.status === "success") {
-                    localStorage.setItem("username", res.data.username)
-                    localStorage.setItem("token", res.data.token)
-                    navigate("/home")
-                }
+        if (userData.password.length >= 6) {
+            await axios.post(`${AppSettings.APIserver}/register`, userData)
+                .then(res => {
+                    console.log(res)
+                    if (res.data.key === "success") {
+                        console.log(res.data)
+                        const { username, id, token, account_type } = res.data
+
+                        let user_info = {
+                            username,
+                            id,
+                            token,
+                            account_type
+                        }
+
+                        localStorage.setItem("usr_info", JSON.stringify(user_info))
+                        // localStorage.setItem("token", res.data.token)
+                        navigate("/home")
+                    }
+                    else if (res.data.key === "username_is_taken") {
+                        setErrorInfo({
+                            status: true,
+                            message: "Username is Taken"
+                        })
+                    } else if (res.data.key === "email_is_taken") {
+                        setEmailErorr({
+                            status: true,
+                            message: "Email address is already registered!"
+                        })
+                    }
+                })
+                .catch(e => console.log(e))
+        } else {
+            setErrorInfo({
+                status: false,
+                message: ""
             })
-            .catch(e => console.log(e))
+        }
     }
 
     return (
         <div className="flex justify-center items-center bg-gray-100 h-screen">
-
+            <Toast left="left-100" top="top-100" />
             <form className="flex flex-col gap-4 w-1/3 p-5 m-auto bg-white rounded border border-gray-100" onSubmit={register}>
 
                 <div>
@@ -40,12 +81,20 @@ export const Signup = () => {
                         />
                     </div>
                     <TextInput
+                        color={emailError.status ? "failure" : "gray"}
                         id="email2"
                         placeholder="name@flowbite.com"
                         required
                         shadow
+                        helperText={emailError.status && <span className="font-medium">{emailError.message}</span>}
                         value={userData.email}
-                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                        onChange={(e) => {
+                            setEmailErorr({
+                                status: false,
+                                message: ""
+                            })
+                            setUserData({ ...userData, email: e.target.value })
+                        }}
                         type="email"
                     />
                 </div>
@@ -57,12 +106,20 @@ export const Signup = () => {
                         />
                     </div>
                     <TextInput
+                        color={errorInfo.status ? "failure" : "gray"}
                         id="username"
                         required
                         shadow
+                        helperText={errorInfo.status && <span className="font-medium">{errorInfo.message}</span>}
                         type="text"
                         value={userData.username}
-                        onChange={(e) => setUserData({ ...userData, username: e.target.value })}
+                        onChange={(e) => {
+                            setErrorInfo({
+                                status: false,
+                                message: ""
+                            })
+                            setUserData({ ...userData, username: e.target.value })
+                        }}
                     />
                 </div>
                 <div>

@@ -16,7 +16,7 @@ export const HomeWrapper = () => {
             <HomeNavbar />
             <div className="flex items-start">
                 <Sidebar />
-                <div className="m-4">
+                <div className="m-4 w-full">
                     <Routes>
                         <Route path="" element={pendingTransfer ? <Invest /> : <Main />} />
                         <Route path="recharge" element={<Recharge />} />

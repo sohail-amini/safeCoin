@@ -7,9 +7,8 @@ export const Deposite = () => {
     const location = useLocation()
     const [depositeInfo, setDepositeInfo] = useState({})
 
-
     const createInvoice = async (pk) => {
-        await axios(`${AppSettings.APIserver}/${pk}`)
+        await axios(`${AppSettings.APIserver}/create_payment/${pk}`)
             .then(res => {
                 console.log(res.data)
                 setDepositeInfo(res.data)

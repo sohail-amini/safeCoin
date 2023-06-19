@@ -20,10 +20,18 @@ export const Login = () => {
         e.preventDefault()
         setLoader(true)
         await axios.post(`${AppSettings.APIserver}/login`, userData).then(res => {
-            console.log(res)
             if (res.status === 200) {
-                localStorage.setItem("username", res.data.username)
-                localStorage.setItem("token", res.data.token)
+                console.log(res)
+                const { username, id, token, account_type } = res.data
+
+                let user_info = {
+                    username,
+                    id,
+                    token,
+                    account_type
+                }
+
+                localStorage.setItem("usr_info", JSON.stringify(user_info))
                 axios(`${AppSettings.APIserver}/latest_pending_transfer/${localStorage.getItem("username")}`)
                     .then(res => {
                         if (res.data.status === "pending") {
@@ -48,7 +56,7 @@ export const Login = () => {
 
     return (
         <div className="flex justify-center items-center bg-gray-100 h-screen">
-            <Toast />
+            <Toast left="left-10" top="top-10" />
             <form className="bg-white rounded flex flex-col gap-4 border border-gray-100 w-1/3 p-5 m-auto" onSubmit={login}>
                 <div>
                     <div className="mb-2 block">
