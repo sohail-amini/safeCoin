@@ -66,16 +66,7 @@ export const Main = () => {
           <h5 className="mb-2 flex items-center  text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Transfer</h5>
           {/* <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
         </a>
-        <a onClick={() => navigate("/home/echeck")} href="#" className="flex items-cener sm:flex-col sm:items-center block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 ">
-          <HiOutlineBadgeCheck className="text-green-500 h-12 w-12" />
-          <h5 className="mb-2 flex items-center  text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Generate eCheck</h5>
-          {/* <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
-        </a>
-        <a onClick={() => navigate("/home/exchange")} href="#" className="flex items-cener sm:flex-col sm:items-center block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 ">
-          <RiExchangeDollarLine className="text-purple-500 h-12 w-12" />
-          <h5 className="mb-2 flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exchange eCheck</h5>
-          {/* <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
-        </a>
+
         <a onClick={() => navigate("/home/invest")} href="#" className="flex items-cener sm:flex-col sm:items-center block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 ">
           <GiReceiveMoney className="text-pink-500 h-12 w-12" />
           <h5 className="mb-2 flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Invest</h5>

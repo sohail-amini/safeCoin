@@ -5,7 +5,7 @@ export const InsideNav = ({ name }) => {
 
     const { prices, pendingTransfer } = useContext(GlobalContext);
     const location = useLocation()
-
+    console.log(prices)
     return (
         <nav className="flex flex-col space-y-2" aria-label="Breadcrumb">
             <div className="block grid grid-cols-4 text-center">

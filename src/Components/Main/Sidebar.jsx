@@ -47,20 +47,8 @@ export const Sidebar = () => {
                      <span class="flex-1 ml-3 whitespace-nowrap">Transfer</span>
                   </a>
                </li>
-               <li onClick={() => navigate("/home/echeck")} className="cursor-pointer">
-                  <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 
-                     <HiOutlineBadgeCheck className="text-gray-500 h-5 w-5" />
-                     <span class="flex-1 ml-3 whitespace-nowrap">Generate eCheck</span>
-                  </a>
-               </li>
-               <li onClick={() => navigate("/home/exchange")} className="cursor-pointer">
-                  <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 
-                     <RiExchangeDollarLine className="text-gray-500 h-5 w-5" />
-                     <span class="flex-1 ml-3 whitespace-nowrap">Exchange eCheck</span>
-                  </a>
-               </li>
                <li onClick={() => navigate("/home/invest")} className="cursor-pointer">
                   <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 

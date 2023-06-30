@@ -58,11 +58,11 @@ function App() {
     useEffect(() => {
       
       const pendingTransfer = async () => {
-      
-      await axios(`${AppSettings.APIserver}/latest_pending_transfer/${localStorage.getItem("username")}`, {
+      const userInfo = JSON.parse(localStorage.getItem("usr_info"))
+      await axios(`${AppSettings.APIserver}/latest_pending_transfer/${userInfo.username}`, {
         
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${userInfo.token}`
       }
       })
       .then(res => {
@@ -78,36 +78,35 @@ function App() {
         pendingTransfer()   
     }, [location.pathname])
 
-  //   useEffect(() => {
-  //     const interval = setInterval(() => {
-  //         try {
-  //           fetch("https://api.livecoinwatch.com/coins/list", {
-  //             method: "POST",
-  //             headers: {
-  //               "content-type": "application/json",
-  //               "x-api-key": "3dea6ef1-1c17-4c46-9595-4cd01ccb597c",
-  //             },
-  //             body: JSON.stringify({
-  //               currency: "USD",
-  //               sort: "rank",
-  //               order: "ascending",
-  //               offset: 0,
-  //               limit: 6,
-  //               meta: false,
-  //             }),
-  //           }).then(res => res.json()).then(res => {
-  //             if (res.status === 200 )
-  //               setPrices({btc: res[0].rate.toFixed(2), eth: res[1].rate.toFixed(2), bnb: res[3].rate.toFixed(2), xrp: res[5].rate.toFixed(2)})
-  //           })
+    useEffect(() => {
+      const interval = setInterval(() => {
+          try {
+            fetch("https://api.livecoinwatch.com/coins/list", {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+                "x-api-key": "3dea6ef1-1c17-4c46-9595-4cd01ccb597c",
+              },
+              body: JSON.stringify({
+                currency: "USD",
+                sort: "rank",
+                order: "ascending",
+                offset: 0,
+                limit: 6,
+                meta: false,
+              }),
+            }).then(res => res.json()).then(res => {
+              setPrices({btc: res[0].rate.toFixed(2), eth: res[1].rate.toFixed(2), bnb: res[3].rate.toFixed(2), xrp: res[5].rate.toFixed(2)})
+            })
 
-  //       } catch (error) {
-  //         console.error("Error occurred during API request:", error);
-  //       }
+        } catch (error) {
+          console.error("Error occurred during API request:", error);
+        }
 
 
-  //     }, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
+      }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   
 
@@ -117,7 +116,8 @@ function App() {
       token = JSON.parse(localStorage.getItem('usr_info')).token;
     }
       
-
+    console.log(token)
+    
     axios(`${AppSettings.APIserver}/protected`, {
       headers: {
           Authorization: `Bearer ${token}`
