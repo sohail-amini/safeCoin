@@ -1,18 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   // mode: "jit",
-  darkMode: 'class',
+  darkMode: "class",
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
+    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     screens: {
-      'xl': {'max': '1279px'},
-      'md': {'max': '950px'},
-      'sm': {'max': '650px'},
+      xl: { max: "1279px" },
+      md: { max: "950px" },
+      sm: { max: "650px" },
     },
-    extend: {},
+    extend: {
+      colors: {
+        themask: "rgba(0, 0, 0, 0.25)",
+      },
+    },
   },
-  plugins: [require('flowbite/plugin')],
-}
+  plugins: [require("flowbite/plugin")],
+};
