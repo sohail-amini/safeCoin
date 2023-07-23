@@ -18,7 +18,6 @@ class Transfer(db.Model):
     fees = Column(db.Integer)
 
     
-
 __name__ = "__transfer__"
 transfer_bp = Blueprint("transfer", __name__)
 
@@ -46,7 +45,8 @@ def create_transfer():
     try:
         json = request.get_json()
         
-        receiver = User().query.filter_by(username=json["receiver"]).first()
+        receiver_username = json["receiver"]
+        receiver = User().query.filter_by(username=receiver_username).first()
         sender = User.query.filter_by(id=json["senderId"]).first()
         
         if receiver is None:
@@ -58,7 +58,11 @@ def create_transfer():
         for key, value in request.json.items():
             setattr(transfer, key, value)
         
-        sender.balance = sender.balance - float(json["amount"])
+        amount = float(json["amount"])
+        sender.balance = sender.balance - amount
+        if receiver_username == receiver.username:
+            receiver.balance += amount
+            
         save_to_db(transfer)
         save_to_db(sender)
         balance = sender.balance
@@ -70,6 +74,7 @@ def create_transfer():
 
 @transfer_bp.route("/fetch_all_transfer/<string:sender>")
 def fetch_all_transfer(sender):
+    
     transfers = Transfer.query.filter_by(sender=sender).all()
     transfers_data = []
     

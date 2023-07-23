@@ -18,8 +18,6 @@ class Investment(db.Model):
     status = Column(db.String(255))
     user_id = Column(db.Integer)
 
-    
-
 __name__ = "__investments__"
 investment_bp = Blueprint("investments", __name__)
 
@@ -27,10 +25,9 @@ investment_bp = Blueprint("investments", __name__)
 def retrieve_all_investment_packages():
     investment = Investment()
     try:
-        # Query all investment packages
+        
         packages = investment.query().all()
         
-        # Convert packages to a list of dictionaries
         packages_list = []
         for package in packages:
             package_dict = {
@@ -41,11 +38,9 @@ def retrieve_all_investment_packages():
             }
             packages_list.append(package_dict)
         
-        # Return the packages as JSON
         return jsonify(packages_list)
 
     except Exception as e:
-        # Handle any errors that occur during the retrieval process
         print("Error retrieving investment packages:", str(e))
         return jsonify([])
 
@@ -57,11 +52,8 @@ def create_investment():
         for key, value in request.json.items():
                 setattr(invest, key, value)
         save_to_db(invest)
-        
-        # Return a success response
         return jsonify({'message': 'Investment created successfully'})
 
     except Exception as e:
-        # Handle any errors that occur during the process
         print("Error creating investment:", str(e))
         return jsonify({'error': 'Failed to create investment'})

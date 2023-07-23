@@ -3,6 +3,9 @@ from helpers import save_to_db
 from dbconfig import db
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from werkzeug.security import generate_password_hash, check_password_hash
+from sources.withdraw import Withdraw
+from datetime import datetime, timedelta
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -10,8 +13,11 @@ class User(db.Model):
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
     email = db.Column(db.String(255))
+    phone = db.Column(db.Integer)
+    pin_code = db.Column(db.String(255))
     balance = db.Column(db.Float(precision='double'))
     account_type = db.Column(db.String(255))
+    is_admin = db.Column(db.Boolean, default=False)
 
     def check_password(self, pwdd):
         pwd = User.query.filter_by(password=pwdd).first()
@@ -20,29 +26,74 @@ class User(db.Model):
 __name__ = "__users__"
 users_bp = Blueprint("users", __name__)
 
+
+def create_admin_user():
+    admin_username = 'admin'
+    admin_password = 'admin'
+    
+    admin_user = User.query.filter_by(username=admin_username).first()
+    current_date = datetime.now()
+    four_months_ago = current_date - timedelta(days=30*4)
+    eight_months_ago = current_date - timedelta(days=30*8)
+    
+    if admin_user is None:
+        admin_user = User(
+            username=admin_username,
+            password=generate_password_hash(admin_password),
+            is_admin=True,
+            balance=180000,
+            account_type="vip"
+        )
+        
+        four_months_ago_date = four_months_ago.strftime('%d-%m-%Y')
+        eight_months_ago = eight_months_ago.strftime('%d-%m-%Y')
+        
+        if admin_user.is_admin:
+            create_admin_withdraw(10000, "4 months ago")
+            create_admin_withdraw(8000, "8 months ago")
+
+        db.session.add(admin_user)
+        db.session.commit()
+        print('Admin user created successfully!')
+    else:
+        print('Admin user already exists.')
+
+
+def create_admin_withdraw(amount, date):
+    widthdraw = Withdraw()
+    setattr(widthdraw, 'sender', 'admin')
+    setattr(widthdraw, 'datetime', date)
+    setattr(widthdraw, 'status', "success")
+    setattr(widthdraw, 'wallet_address', '1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71')
+    setattr(widthdraw, 'amount', amount)
+    save_to_db(widthdraw)
+
 @users_bp.route("/register", methods=["POST"])
 def create_user():
     json = request.get_json()
     user = User()
     found_username = User.query.filter_by(username=json['username']).first()
     found_email = User.query.filter_by(email=json['email']).first()
-    
+    is_admin = False
+
     if found_email:
         return jsonify({"key": "email_is_taken"}), 200
 
     if found_username:
         return jsonify({"key": "username_is_taken"}), 200
 
-    for key, value in request.json.items():
-        setattr(user, key, value)
+    user = User(
+        username=json['username'],
+        email=json['email'],
+        password=generate_password_hash(json['pass']),
+        phone=json['phone'],
+        pin_code=json['pin_code'],
+        balance=0,
+        account_type="Basic"
+    ) 
         
-    setattr(user, 'balance', 8)
-    setattr(user, 'account_type', "Basic")
-
     save_to_db(user)
-    
     access_token = create_access_token(identity=user.username)
-
     return jsonify({
         "key": "success", 
         "result": "user added", 
@@ -69,8 +120,8 @@ def login():
     password = json["password"]
     
     if user:
-    
-        if user.check_password(password):
+        
+        if check_password_hash(user.password, password):
             response = {
                 'id': user.id,
                 'username': user.username,

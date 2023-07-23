@@ -61,6 +61,7 @@ def create_payment(pk):
     url = 'https://www.blockonomics.co/api/new_address'
     headers = {'Authorization': "Bearer " + "E9MYfzValcohfTq2jBh8o7DLukXsRzMQY2slYVypGhM"}
     r = requests.post(url, headers=headers)
+    print(r.text)
     if r.status_code == 200:
         address = r.json()['address']
         bits = exchange_rate(product.price)
