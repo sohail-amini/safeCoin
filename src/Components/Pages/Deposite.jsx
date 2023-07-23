@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import AppSettings from "../../app.settings.json";
+import { GlobalContext } from "../../App";
 
 export const Deposite = () => {
   const location = useLocation();
   const [depositeInfo, setDepositeInfo] = useState({});
+  const { userinfo } = useContext(GlobalContext);
 
   const createInvoice = async (pk) => {
     await axios(`${AppSettings.APIserver}/create_payment/${pk}`).then((res) => {
@@ -27,8 +29,7 @@ export const Deposite = () => {
   return (
     <div>
       <h2 className="text-2xl ml-3">
-        {localStorage.getItem("username")}, Please Complete Your Investment
-        Deposit
+        {userinfo.username}, Please Complete Your Investment Deposit
       </h2>
       <div className="flex">
         <a className="inline bg-red-500">

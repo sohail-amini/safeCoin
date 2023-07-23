@@ -1,17 +1,114 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../../App";
 import { Modal } from "../Helpers/Modal";
-export const Withdraw = () => {
-  const { balance, pendingTransfer } = useContext(GlobalContext);
-  const [value, setValue] = useState(0);
-  const [withdrawalPopup, setWithdrawalPopup] = useState(true);
+import { Spinner } from "flowbite-react";
+import axios from "axios";
+import AppSettings from "../../app.settings.json";
 
-  const handleChange = (event) => {
-    const value = Math.max(0, Math.min(balance, Number(event.target.value)));
-    setValue(value);
+export const Withdraw = () => {
+  const { balance, prices } = useContext(GlobalContext);
+
+  let info = JSON.parse(localStorage.getItem("usr_info"));
+
+  const [values, setValues] = useState({
+    wallet_address: "",
+    amount: null,
+    secret_key: "",
+    sender: info.username,
+  });
+  const [withdrawalPopup, setWithdrawalPopup] = useState({
+    show: false,
+    status: "error",
+    error_code: "",
+  });
+  const [loader, setLoader] = useState(false);
+  const [withdraws, setWithdraws] = useState([]);
+
+  let to_fixed = balance.toString().length > 6 ? 4 : 6;
+  if (balance === 0) to_fixed = 0;
+
+  const fetchWithdraws = async () => {
+    try {
+      // Your async logic here
+      const result = await axios(
+        `${AppSettings.APIserver}/total_withdraw/${info.username}`
+      ).then((res) => setWithdraws(res.data.withdraws));
+      // Do something with the result
+      console.log(result);
+    } catch (error) {
+      // Handle any errors
+      console.error(error);
+    }
   };
+  useEffect(() => {
+    fetchWithdraws();
+  }, [withdrawalPopup]);
+  // const handleChange = (event) => {
+  //   const balance_amount = Math.max(
+  //     0,
+  //     Math.min(balance, Number(event.target.value))
+  //   );
+  //   let key = event.target.name;
+  //   setValues({
+  //     [key]: key === "amount" ? balance_amount : event.target.value,
+  //   });
+  //   // console.log(event.target.name);
+  // };
+
+  const confirmWithdraw = async () => {
+    setLoader(true);
+    console.log(
+      "max amount",
+      info.username !== "admin" && values.amount > balance
+    );
+
+    if (info.username === "admin") {
+      setTimeout(() => {
+        setWithdrawalPopup({
+          show: true,
+          status: "failed",
+        });
+        setLoader(false);
+      }, 3000);
+    } else if (info.username !== "admin" && values.amount > balance) {
+      setTimeout(() => {
+        setWithdrawalPopup({
+          show: true,
+          status: "failed",
+          status_code: "max_amount",
+        });
+        setLoader(false);
+      }, 3000);
+    } else {
+      await axios
+        .post(`${AppSettings.APIserver}/create_withdraw`, { ...values })
+        .then(() => {
+          setTimeout(() => {
+            setLoader(false);
+            setWithdrawalPopup({
+              show: true,
+              status: "success",
+            });
+            setValues({
+              wallet_address: "",
+              amount: null,
+              secret_key: "",
+            });
+          }, 2000);
+        })
+        .catch(() => {
+          setLoader(false);
+          setValues({
+            wallet_address: "",
+            amount: null,
+            secret_key: "",
+          });
+        });
+    }
+  };
+
   return (
-    <div className="w-full">
+    <div className="w-full ">
       {/*
         <div
           id="alert-additional-content-2"
@@ -59,78 +156,142 @@ export const Withdraw = () => {
         </div>
       */}
 
-      <div class="w-3/5 mt-2 m-auto">
+      <div class="mt-2 ">
         <form
-          class={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 ${
-            pendingTransfer && "opacity-40 cursor-not-allowed"
-          }`}
+          class={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-3/5`}
         >
-          <h2 className="bg-green-100 dark:bg-gray-900 p-2 text-green-600 rounded mb-2 w-2/4 text-center font-bold">
-            Account: $ {balance.toLocaleString()}
+          <h1 className="text-2xl mb-4 font-bold leading-12 text-gray-600 dark:text-gray-100">
+            New Withdraw
+          </h1>
+          <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 text-center font-bold">
+            Balance: ${balance.toLocaleString()}{" "}
+            {`(₿ ${(balance / prices.btc).toFixed(to_fixed)})`}
           </h2>
+          {balance === 0 && (
+            <div
+              class="p-4 mb-4 text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-green-400"
+              role="alert"
+            >
+              <b className="ml-2">
+                You can't withdraw because your balance is zero ☹️
+              </b>
+            </div>
+          )}
           <div class="mb-4">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2"
+              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
               for="username"
             >
               Wallet Address
             </label>
             <input
-              disabled={pendingTransfer}
+              value={values.wallet_address}
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:bg-gray-900 leading-tight focus:outline-none focus:shadow-outline"
               id="username"
               type="text"
+              name="wallet_address"
+              onChange={(e) =>
+                setValues({ ...values, wallet_address: e.target.value })
+              }
               placeholder="Wallet Address"
             />
           </div>
           <div class="mb-4">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2"
+              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
               for="username"
             >
               Amount
             </label>
             <input
-              value={value}
-              disabled={pendingTransfer}
+              value={values.amount !== null && values.amount}
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:bg-gray-900 leading-tight focus:outline-none focus:shadow-outline"
               id="amount"
               type="number"
-              onChange={handleChange}
+              name="amount"
+              onChange={(e) => setValues({ ...values, amount: e.target.value })}
               placeholder="Amount"
-              max="25"
             />
           </div>
+
           <div class="mb-6">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2"
+              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
               for="password"
             >
               Security key
             </label>
             <input
-              disabled={pendingTransfer}
+              value={values.secret_key}
               class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:bg-gray-900 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
-              placeholder="******************"
+              name="secret_key"
+              onChange={(e) =>
+                setValues({ ...values, secret_key: e.target.value })
+              }
+              placeholder="(Optional)"
             />
           </div>
           <div class="flex items-center justify-between">
             <button
-              disabled={pendingTransfer}
-              class="bg-blue-500 hover:bg-blue-700 dark:bg-gray-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={
+                loader ||
+                values?.wallet_address === "" ||
+                values?.amount === null ||
+                balance === 0
+              }
+              class="bg-blue-500 block w-48 hover:bg-blue-700 dark:bg-gray-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
+              onClick={confirmWithdraw}
             >
-              Confirm Withdrawal
+              {loader ? (
+                <Spinner aria-label="Default status example" />
+              ) : (
+                "Confirm Withdrawal"
+              )}
             </button>
           </div>
         </form>
-        <p class="text-center text-gray-500 text-xs">
-          &copy;2023 SafeCoin. All rights reserved.
-        </p>
+        <div className="w-full p-4  rounded bg-slate-100 dark:bg-gray-800 dark:text-gray-300">
+          <h2 className="text-2xl mb-4 text-center ">Withdraw History</h2>
+          {withdraws.length > 0 ? (
+            <table class="table-fixed w-full border-separate-4">
+              <thead>
+                <tr>
+                  <th>Wallet Address</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody className="w-full text-center">
+                {withdraws.map((withdraw) => (
+                  <tr className="space-y-6 mt-2">
+                    <td>{withdraw.wallet_address}</td>
+                    <td>{withdraw.amount.toLocaleString()}</td>
+                    <td>{withdraw.status}</td>
+                    <td>{withdraw.datetime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <h2 className="text-center text-2xl text-gray-400">
+              No Widthdraw found
+            </h2>
+          )}
+        </div>
+
+        <div className="mt-6 block ">
+          <p class="text-center text-gray-500 text-base dark:text-gray-200 ">
+            &copy;2023 SafeCoin. All rights reserved.
+          </p>
+        </div>
       </div>
-      {withdrawalPopup && <Modal setPopup={setWithdrawalPopup} />}
+      {withdrawalPopup.show && (
+        <Modal setPopup={setWithdrawalPopup} popupData={withdrawalPopup} />
+      )}
     </div>
   );
 };

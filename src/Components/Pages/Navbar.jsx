@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Navbar, Avatar } from "flowbite-react";
+import { Navbar } from "flowbite-react";
 import AppSettings from "../../app.settings.json";
 import userProfile from "../../assets/user.png";
 import { capitalizeFirstLetter } from "../../App";
@@ -7,13 +7,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../App";
 
 export const HomeNavbar = () => {
-  const { balance, setBalance } = useContext(GlobalContext);
+  const { balance, setBalance, prices } = useContext(GlobalContext);
   const [showProfile, setShowProfile] = useState(false);
   const [userInfo, setUserInfo] = useState({
     username: "",
     balance: 0.0,
   });
   const navigate = useNavigate();
+
+  let to_fixed = balance.toString().length > 6 ? 4 : 6;
+  if (balance === 0) to_fixed = 0;
+
+  console.log("to_fixed", to_fixed);
 
   useEffect(() => {
     let info = JSON.parse(localStorage.getItem("usr_info"));
@@ -134,7 +139,7 @@ export const HomeNavbar = () => {
         {showProfile && (
           <div
             id="userDropdown"
-            class="z-10 absolute top-16 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+            class="z-10 absolute top-16 divide-y divide-gray-100 bg-gray-50 border border-gray-200 dark:border-gray-700 rounded-lg shadow w-60 dark:bg-gray-800 dark:divide-gray-600"
           >
             <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
               <div class="font-medium text-md truncate">
@@ -150,7 +155,10 @@ export const HomeNavbar = () => {
                   href="#"
                   class="block px-4 font-bold py-2 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
-                  Balance: {`$ ${balance.toLocaleString()}`}
+                  Balance:{" "}
+                  {`$${balance.toLocaleString()} (₿ ${(
+                    balance / prices.btc
+                  ).toFixed(to_fixed)})`}
                 </span>
               </li>
               <li>

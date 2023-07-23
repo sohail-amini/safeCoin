@@ -83,14 +83,14 @@ export const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 h-screen">
+    <div className="flex justify-center items-center w-full items-center bg-gray-100 h-screen dark:bg-gray-600">
       <Toast left="left-100" top="top-100" />
-      <div className="p-2 shadow-lg flex flex-cols w-4/5 m-auto bg-white rounded border border-gray-100">
+      <div className="p-2 shadow-lg flex flex-cols w-full m-auto bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-900">
         <div className="flex-1 flex flex-col items-start px-4 pt-10  px-4 border-r">
-          <h2 className="text-3xl font-bold mt-2 mb-6 font-400 text-gray-600 border-b pb-4 block">
+          <h2 className="text-3xl font-bold mt-2 mb-6 font-400 text-gray-600 border-b pb-4 block dark:text-gray-100">
             Create Account and trade safely
           </h2>
-          <h2 className=" self-end mb-12 text-4xl font-bold text-gray-500 leading-16  ">
+          <h2 className="self-end mt-12 mb-12 text-4xl font-bold text-gray-500 leading-16 dark:text-gray-100 ">
             🔥Buy, trade, and hold cryptocurrencies on SafeCoin.
           </h2>
           <div className="flex flex-cols">
@@ -247,7 +247,7 @@ export const Signup = () => {
           <div>
             <span
               onClick={() => navigate("/login")}
-              className="inline  cursor-pointer text-md text-gray-500"
+              className="inline  cursor-pointer text-md text-gray-500 dark:text-gray-100"
             >
               Login
             </span>

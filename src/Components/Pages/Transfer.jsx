@@ -6,7 +6,7 @@ import { GlobalContext } from "../../App";
 import toast from "react-hot-toast";
 
 export const Transfer = () => {
-  const { pendingTransfer, prices, balance, setBalance, setToast } =
+  const { pendingTransfer, prices, balance, setBalance } =
     useContext(GlobalContext);
   let info = JSON.parse(localStorage.getItem("usr_info"));
   const [transferInfo, setTransferInfo] = useState({
@@ -19,6 +19,9 @@ export const Transfer = () => {
   const [loader, setLoader] = useState(false);
 
   const [transfers, setTransfers] = useState([]);
+
+  let to_fixed = balance.toString().length > 6 ? 4 : 6;
+  if (balance === 0) to_fixed = 0;
 
   const fetch_all_transfer = async () => {
     await fetch(`${AppSettings.APIserver}/fetch_all_transfer/${info.username}`)
@@ -45,29 +48,47 @@ export const Transfer = () => {
   const createTransfer = async (e) => {
     e.preventDefault();
     setLoader(true);
-    await axios
-      .post(`${AppSettings.APIserver}/transfer`, {
-        ...transferInfo,
-        senderId: info.id,
-      })
-      .then((res) => {
-        if (res.data.message === "user_not_found") setUserNotFound(true);
-        else {
-          setBalance(res.data.balance.toFixed(2));
-          setTransferInfo({
-            ...transferInfo,
-            receiver: "",
-            amount: "",
-          });
-          toast.success("Transfered successfully");
-          fetch_all_transfer();
-        }
-        setLoader(false);
-      })
-      .catch((e) => {
-        setLoader(false);
-        toast.error("Something went wrong");
-      });
+
+    console.log(info.id);
+    console.log(transferInfo);
+
+    if (transferInfo.receiver === transferInfo.sender) {
+      toast((t) => (
+        <span className="flex flex-row items-center">
+          <span>You can't transfer amount to your account</span>
+          <button
+            className="bg-gray-100 p-1 border border-gray-200 rounded text-sm"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Dismiss
+          </button>
+        </span>
+      ));
+      setLoader(false);
+    } else
+      await axios
+        .post(`${AppSettings.APIserver}/transfer`, {
+          ...transferInfo,
+          senderId: info.id,
+        })
+        .then((res) => {
+          if (res.data.message === "user_not_found") setUserNotFound(true);
+          else {
+            setBalance(res.data.balance.toFixed(2));
+            setTransferInfo({
+              ...transferInfo,
+              receiver: "",
+              amount: "",
+            });
+            toast.success("Transfered successfully");
+            fetch_all_transfer();
+          }
+          setLoader(false);
+        })
+        .catch((e) => {
+          setLoader(false);
+          toast.error("Something went wrong");
+        });
   };
 
   return (
@@ -85,9 +106,25 @@ export const Transfer = () => {
             class="p-4 mb-4 text-green-800 rounded-lg bg-green-100 dark:bg-gray-800 dark:text-green-400"
             role="alert"
           >
-            <span class="font-base"> Balance:</span> ฿ {balance}{" "}
-            <b className="ml-2">${(balance * prices.btc).toFixed(2)} </b>
+            <span class="font-base"> Balance:</span> ${""}
+            {balance.toLocaleString()}
+            {""}
+            <b className="ml-1">
+              {`( ₿ ${(balance / prices.btc).toFixed(to_fixed)})`}{" "}
+            </b>
           </div>
+
+          {balance === 0 && (
+            <div
+              class="p-4 mb-4 text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-green-400"
+              role="alert"
+            >
+              <b className="ml-2">
+                You can't transfer because your balance is zero ☹️
+              </b>
+            </div>
+          )}
+
           <div class="mb-6">
             <label
               for="password"
@@ -118,30 +155,32 @@ export const Transfer = () => {
           </div>
           <div class="mb-6">
             <label
-              for="repeat-password"
+              for="amount"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Transfer Amount (BTC)
+              Transfer Amount
             </label>
             <input
               disabled={pendingTransfer}
               value={transferInfo.amount}
-              onChange={(e) =>
-                setTransferInfo({ ...transferInfo, amount: e.target.value })
-              }
+              onChange={(e) => {
+                const balance_amount = Math.max(
+                  1,
+                  Math.min(balance, Number(e.target.value))
+                );
+                setTransferInfo({ ...transferInfo, amount: balance_amount });
+              }}
+              max={balance}
               type="number"
-              id="repeat-password"
+              id="amount"
               class={` shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light`}
               required
-              placeholder="0.2 BTC Maximuim Per Transfer"
-              max="0.2"
-              step="0.1"
-              min="0.0"
+              placeholder="$10  Maximuim Per Transfer"
             />
           </div>
 
           <button
-            disabled={loader || pendingTransfer}
+            disabled={loader || pendingTransfer || balance === 0}
             type="submit"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
@@ -185,13 +224,13 @@ export const Transfer = () => {
                     To user
                   </th>
                   <th scope="col" class="px-6 py-3">
-                    ฿
+                    Amount
                   </th>
                   <th scope="col" class="px-6 py-3">
                     Status
                   </th>
                   <th scope="col" class="px-6 py-3">
-                    Time
+                    Date
                   </th>
                 </tr>
               </thead>
@@ -204,7 +243,7 @@ export const Transfer = () => {
                     >
                       {transfer.receiver}
                     </th>
-                    <td class="px-6 py-4">{transfer.amount}</td>
+                    <td class="px-6 py-4">{transfer.amount}$</td>
                     <td class="px-6 py-4">{transfer.status}</td>
                     <td class="px-6 py-4">{transfer.datetime}</td>
                   </tr>

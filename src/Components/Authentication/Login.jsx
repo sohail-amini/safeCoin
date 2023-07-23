@@ -48,7 +48,6 @@ export const Login = () => {
             }/latest_pending_transfer/${localStorage.getItem("username")}`
           )
             .then((res) => {
-              console.log(res);
               if (res.data.status === "pending") {
                 setPendingTransfer(true);
                 setPendingTransferInfo(res.data);
@@ -71,10 +70,10 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 h-screen">
+    <div className="flex justify-center items-center bg-gray-100 dark:bg-gray-600 h-screen">
       <Toast left="left-10" top="top-10" />
       <form
-        className="bg-white rounded flex flex-col gap-4 border border-gray-100 w-1/3 p-5 m-auto"
+        className="bg-white rounded flex flex-col gap-4 dark:bg-gray-800 border border-gray-100 dark:border-gray-600 w-1/3 p-5 m-auto"
         onSubmit={login}
       >
         <div>
@@ -119,7 +118,7 @@ export const Login = () => {
           sitekey={process.env.REACT_APP_SITE_KEY}
           onChange={onVerify}
         />
-        <Button type="submit" disabled={loader || isBot}>
+        <Button type="submit" disabled={false}>
           {!loader ? (
             <span>Login</span>
           ) : (
@@ -129,7 +128,7 @@ export const Login = () => {
         <div>
           <span
             onClick={() => navigate("/signup")}
-            className="text-sm text-gray-600 cursor-pointer inline"
+            className="text-sm text-gray-600 cursor-pointer inline dark:text-gray-100"
           >
             Create Account
           </span>

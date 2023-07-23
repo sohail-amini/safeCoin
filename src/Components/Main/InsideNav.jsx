@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../App";
 export const InsideNav = ({ name }) => {
   const { prices, pendingTransfer } = useContext(GlobalContext);
   const location = useLocation();
+  const navigate = useNavigate();
   return (
     <nav className="flex flex-col space-y-2" aria-label="Breadcrumb">
       <div className="block grid grid-cols-4 text-center">
@@ -29,6 +30,12 @@ export const InsideNav = ({ name }) => {
           >
             <span className="font-medium">Warning!</span> Please upgrade your
             level.
+            <button
+              className="border font-bold border-yellow-800 text-yellow-800 p-1 rounded ml-2"
+              onClick={() => navigate("/home/invest")}
+            >
+              Upgrade
+            </button>
           </div>
         )}
     </nav>

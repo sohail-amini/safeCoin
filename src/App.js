@@ -20,7 +20,7 @@ function App() {
     message: "",
   });
   const [prices, setPrices] = useState({
-    btc: 0,
+    btc: 30000,
     eth: 0,
     bnb: 0,
     xrp: 0,
@@ -30,6 +30,8 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [balance, setBalance] = useState(0.0);
+
+  let userinfo = JSON.parse(localStorage.getItem("usr_info"));
 
   useEffect(() => {
     const pendingTransfer = async () => {
@@ -90,12 +92,13 @@ function App() {
       } catch (error) {
         console.error("Error occurred during API request:", error);
       }
-    }, 1000);
+    }, 5000);
     return () => clearInterval(interval);
   };
 
   useEffect(() => {
-    // getCoinsPrice();
+    // Coins prices
+    getCoinsPrice();
   }, []);
 
   useEffect(() => {
@@ -143,6 +146,7 @@ function App() {
           setPendingTransfer,
           balance,
           setBalance,
+          userinfo,
         }}
       >
         <Routes>

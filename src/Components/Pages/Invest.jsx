@@ -36,14 +36,16 @@ export const Invest = (props) => {
             Hello {pendingTransferInfo.receiver}!
           </span>
           The user <b> {pendingTransferInfo.sender} </b> has recently tried to
-          transfer <b> {pendingTransferInfo.amount} </b> ฿TC{" "}
-          <b>(${Math.floor(prices.btc * pendingTransferInfo.amount)}) </b> to
-          your account. Our system witheld the transfer because free-trial
+          transfer <b> ${pendingTransferInfo.amount} </b>
+          <b>
+            (₿{" "}
+            {(pendingTransferInfo.amount / Math.floor(prices.btc)).toFixed(6)}){" "}
+          </b>{" "}
+          to your account. Our system witheld the transfer because free-trial
           accounts cannot send or receive Bitcoin through our service. Once you
           make an investment in any of our VIP plans, our system will
-          automatically add the <b> {pendingTransferInfo.amount} </b> ฿TC{" "}
-          <b>(${Math.floor(prices.btc * pendingTransferInfo.amount)}) </b> to
-          your VIP account balance.
+          automatically add the <b>${pendingTransferInfo.amount}</b> to your VIP
+          account balance.
         </div>
       )}
 
