@@ -234,7 +234,7 @@ export const Signup = () => {
             </Label>
           </div>
           <ReCAPTCHA
-            sitekey={process.env.REACT_APP_SITE_KEY}
+            sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
             onChange={onVerify}
           />
           <Button type="submit" disabled={loader || isBot}>

@@ -82,7 +82,7 @@ function App() {
             setPrices({
               btc: res[0].rate.toFixed(2),
               eth: res[1].rate.toFixed(2),
-              bnb: res[3].rate.toFixed(2),
+              bnb: res[4].rate.toFixed(2),
               xrp: res[5].rate.toFixed(2),
             });
           })
