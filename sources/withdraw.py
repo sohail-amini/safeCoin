@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy import Column
-# from datetime import datetime
 from datetime import date
 from dbconfig import db
 from helpers import save_to_db
@@ -19,14 +18,29 @@ withdraw_bp = Blueprint("withdraw", __name__)
 @withdraw_bp.route("/create_withdraw", methods=["POST"])
 def create_withdraw():
     withdraw = Withdraw()
+
+    from sources.users import User
+    
     try:
         json_data = request.get_json()
+        pin_code = json_data["secret_key"]
+        sender_name = json_data["sender"]
+        result = User().query.filter_by(pin_code=pin_code).first()
+        sender = User().query.filter_by(username=sender_name).first()
+        
+        print("json_data", json_data)
+        if result is None:
+            return jsonify({'message': 'wrong_pin'}), 200
         
         for key, value in json_data.items():
             setattr(withdraw, key, value)
         setattr(withdraw, 'datetime', date.today())
+        setattr(withdraw, 'status', "success")
+        sender.balance = sender.balance - json_data["amount"]
         save_to_db(withdraw)
-        
+        save_to_db(sender)
+        balance = sender.balance
+        return jsonify({'message': 'withdraw was successfully sent', 'balance': balance })
     except Exception as e:
         print("Error", e) 
     # withdraw = Withdraw()
