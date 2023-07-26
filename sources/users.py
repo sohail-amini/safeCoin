@@ -13,7 +13,6 @@ class User(db.Model):
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
     email = db.Column(db.String(255))
-    phone = db.Column(db.Integer)
     pin_code = db.Column(db.String(255))
     balance = db.Column(db.Float(precision='double'))
     account_type = db.Column(db.String(255))
@@ -86,7 +85,6 @@ def create_user():
         username=json['username'],
         email=json['email'],
         password=generate_password_hash(json['pass']),
-        phone=json['phone'],
         pin_code=json['pin_code'],
         balance=0,
         account_type="Basic"

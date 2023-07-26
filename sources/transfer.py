@@ -46,26 +46,37 @@ def create_transfer():
         json = request.get_json()
         
         receiver_username = json["receiver"]
+        sender_name = json["sender"]
         receiver = User().query.filter_by(username=receiver_username).first()
         sender = User.query.filter_by(id=json["senderId"]).first()
+        current_user_transfers = Transfer().query.filter_by(sender=sender_name).all()
         
         if receiver is None:
             return jsonify({'message': 'user_not_found'})
         
         current_datetime = datetime.utcnow()
 
+        amount = float(json["amount"])
+        
         transfer = Transfer()
+        balance = sender.balance
+
+        total_transferred_amount = sum(transfer.amount for transfer in current_user_transfers)
+        
+        print(total_transferred_amount > 500 and sender_name != 'admin')
+        if (total_transferred_amount > 500 and sender_name != 'admin'):
+            return jsonify({ 'key': "max_transfer_amount", 'balance': balance}), 200
+            
         for key, value in request.json.items():
             setattr(transfer, key, value)
         
-        amount = float(json["amount"])
         sender.balance = sender.balance - amount
         if receiver_username == receiver.username:
             receiver.balance += amount
             
         save_to_db(transfer)
         save_to_db(sender)
-        balance = sender.balance
+        
         return jsonify({'message': 'transfer created successfully', 'balance': balance })
 
     except Exception as e:

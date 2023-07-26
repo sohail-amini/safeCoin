@@ -17,21 +17,27 @@ withdraw_bp = Blueprint("withdraw", __name__)
 
 @withdraw_bp.route("/create_withdraw", methods=["POST"])
 def create_withdraw():
+    json_data = request.get_json()
+    pin_code = json_data["secret_key"]
+    sender_name = json_data["sender"]
+    amount = json_data['amount']
     withdraw = Withdraw()
-
+    current_user_withdraws = Withdraw().query.filter_by(sender=sender_name).all()
     from sources.users import User
     
     try:
-        json_data = request.get_json()
-        pin_code = json_data["secret_key"]
-        sender_name = json_data["sender"]
+        
         result = User().query.filter_by(pin_code=pin_code).first()
         sender = User().query.filter_by(username=sender_name).first()
-        
+        balance = sender.balance
         print("json_data", json_data)
         if result is None:
             return jsonify({'message': 'wrong_pin'}), 200
         
+        total_withdraws = sum(transfer.amount for transfer in current_user_withdraws)
+        if (total_withdraws + amount > 25 or amount > 25 or total_withdraws > 25 and sender_name != 'admin'):
+            return jsonify({ 'key': "max_amount", 'balance': balance}), 200
+
         for key, value in json_data.items():
             setattr(withdraw, key, value)
         setattr(withdraw, 'datetime', date.today())
@@ -43,11 +49,7 @@ def create_withdraw():
         return jsonify({'message': 'withdraw was successfully sent', 'balance': balance })
     except Exception as e:
         print("Error", e) 
-    # withdraw = Withdraw()
-    # setattr(withdraw, 'wallet_address', '1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71')
-    # setattr(withdraw, 'datetime', '12-04-2023')
-    # save_to_db(withdraw)
-
+    
     return jsonify({'message': 'successfully sent'}), 200
 
 
