@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from werkzeug.security import generate_password_hash, check_password_hash
 from sources.withdraw import Withdraw
 from datetime import datetime, timedelta
+import bcrypt
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -145,9 +146,36 @@ def check_logged_in():
     # Return the logged-in status as a JSON response
     return jsonify({'logged_in': logged_in})
 
+
 @users_bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
     print("current_user", current_user)
     return jsonify({'message': 'Protected content', 'current_user': 'current_user'}), 200
+
+@users_bp.route("/change_pass/<string:user_id>", methods=['POST'])
+def change_password(user_id):
+    json_data = request.get_json();
+    user = User.query.filter_by(id=user_id).first();
+    old_password = json_data["old_pass"];
+    if check_password_hash(user.password, old_password):
+        password=generate_password_hash(json_data['new_pass'])
+        user.password = password
+        save_to_db(user) 
+        return {
+            "is_same_pass": True 
+        }
+    else:
+        return {
+            "is_same_pass": False 
+        }
+
+    # generate_password_hash = 
+    # isSamePassword = bcrypt.hashpw(, result.password)
+
+    # print("result", result.password)
+    # return {
+    #     "isSm"
+    #     "password": result.password
+    # };
