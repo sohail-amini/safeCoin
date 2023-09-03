@@ -9,3 +9,4 @@ SQLAlchemy==2.0.9
 flask-jwt-extended
 requests
 psycopg2
+bcrypt
