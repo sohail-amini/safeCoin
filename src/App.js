@@ -30,6 +30,7 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [balance, setBalance] = useState(0.0);
+  const [open, setOpen] = React.useState(false);
 
   let userinfo = JSON.parse(localStorage.getItem("usr_info"));
 
@@ -46,7 +47,10 @@ function App() {
           }
         )
           .then((res) => {
-            if (res.data.status === "pending") {
+            if (
+              res.data.status === "pending" &&
+              userInfo.username !== "admin"
+            ) {
               setPendingTransfer(true);
               setPendingTransferInfo(res.data);
             } else {
@@ -123,7 +127,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div>
       <Toaster
         position="top-right"
         reverseOrder={false}
@@ -147,6 +151,8 @@ function App() {
           balance,
           setBalance,
           userinfo,
+          setOpen,
+          open,
         }}
       >
         <Routes>
@@ -155,7 +161,7 @@ function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
       </GlobalContext.Provider>
-    </>
+    </div>
   );
 }
 

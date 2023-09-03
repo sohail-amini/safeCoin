@@ -8,15 +8,18 @@ import { Invest } from "../Pages/Invest";
 import { Transfer } from "../Pages/Transfer";
 import { Deposite } from "../Pages/Deposite";
 import { About } from "../Pages/About";
+import { ChangePassword } from "../Pages/ChangePassword";
 import { Partners } from "../Pages/Partners";
 
 import { Routes, Route } from "react-router-dom";
 import { GlobalContext } from "../../App";
 export const HomeWrapper = () => {
-  const { pendingTransfer } = useContext(GlobalContext);
+  const { pendingTransfer, setOpen, open } = useContext(GlobalContext);
+
   return (
-    <div className="dark:bg-gray-700">
-      <HomeNavbar />
+    <div className="themask dark:bg-gray-700">
+      <HomeNavbar setOpen={setOpen} />
+      {open && <ChangePassword />}
       <div className="flex items-start">
         <Sidebar />
         <div className="m-4 w-full">
@@ -29,6 +32,7 @@ export const HomeWrapper = () => {
             <Route path="withdraw" element={<Withdraw />} />
             <Route path="about" element={<About />} />
             <Route path="partners" element={<Partners />} />
+            <Route path="change_password" element={<ChangePassword />} />
           </Routes>
         </div>
       </div>

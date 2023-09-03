@@ -6,7 +6,7 @@ import axios from "axios";
 import AppSettings from "../../app.settings.json";
 
 export const Withdraw = () => {
-  const { balance, prices } = useContext(GlobalContext);
+  const { balance, prices, setBalance } = useContext(GlobalContext);
 
   let info = JSON.parse(localStorage.getItem("usr_info"));
 
@@ -57,11 +57,7 @@ export const Withdraw = () => {
 
   const confirmWithdraw = async () => {
     setLoader(true);
-    console.log(
-      "max amount",
-      info.username !== "admin" && values.amount > balance
-    );
-
+    console.log(info.username);
     if (info.username === "admin") {
       setTimeout(() => {
         setWithdrawalPopup({
@@ -81,22 +77,43 @@ export const Withdraw = () => {
       }, 3000);
     } else {
       await axios
-        .post(`${AppSettings.APIserver}/create_withdraw`, { ...values })
-        .then(() => {
-          setTimeout(() => {
-            setLoader(false);
+        .post(`${AppSettings.APIserver}/create_withdraw`, {
+          ...values,
+          sender: info.username,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.data.message === "wrong_pin") {
             setWithdrawalPopup({
               show: true,
-              status: "success",
+              status: "failed",
+              status_code: "wrong_pin",
             });
-            setValues({
-              wallet_address: "",
-              amount: null,
-              secret_key: "",
+            setLoader(false);
+          } else if (res.data.key === "max_amount") {
+            setWithdrawalPopup({
+              show: true,
+              status: "failed",
+              status_code: "max_amount_reached",
             });
-          }, 2000);
+            setLoader(false);
+          } else {
+            setTimeout(() => {
+              setWithdrawalPopup({
+                show: true,
+                status: "success",
+              });
+              setValues({
+                wallet_address: "",
+                amount: null,
+                secret_key: "",
+              });
+              setLoader(false);
+              setBalance(res.data.balance);
+            }, 2000);
+          }
         })
-        .catch(() => {
+        .catch((e) => {
           setLoader(false);
           setValues({
             wallet_address: "",
@@ -106,6 +123,13 @@ export const Withdraw = () => {
         });
     }
   };
+
+  function show12Characters(inputString) {
+    if (inputString.length > 12) {
+      return inputString.slice(0, 12) + "...";
+    }
+    return inputString;
+  }
 
   return (
     <div className="w-full ">
@@ -161,7 +185,7 @@ export const Withdraw = () => {
           class={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-3/5`}
         >
           <h1 className="text-2xl mb-4 font-bold leading-12 text-gray-600 dark:text-gray-100">
-            New Withdraw
+            New withdrawal
           </h1>
           <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 text-center font-bold">
             Balance: ${balance.toLocaleString()}{" "}
@@ -193,7 +217,7 @@ export const Withdraw = () => {
               onChange={(e) =>
                 setValues({ ...values, wallet_address: e.target.value })
               }
-              placeholder="Wallet Address"
+              placeholder=""
             />
           </div>
           <div class="mb-4">
@@ -209,8 +233,14 @@ export const Withdraw = () => {
               id="amount"
               type="number"
               name="amount"
-              onChange={(e) => setValues({ ...values, amount: e.target.value })}
-              placeholder="Amount"
+              max={balance}
+              onChange={(e) => {
+                const balance_amount = Math.max(
+                  1,
+                  Math.min(balance, Number(e.target.value))
+                );
+                setValues({ ...values, amount: balance_amount });
+              }}
             />
           </div>
 
@@ -219,7 +249,7 @@ export const Withdraw = () => {
               class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
               for="password"
             >
-              Security key
+              5-digit PIN code
             </label>
             <input
               value={values.secret_key}
@@ -230,7 +260,7 @@ export const Withdraw = () => {
               onChange={(e) =>
                 setValues({ ...values, secret_key: e.target.value })
               }
-              placeholder="(Optional)"
+              placeholder=""
             />
           </div>
           <div class="flex items-center justify-between">
@@ -268,7 +298,7 @@ export const Withdraw = () => {
               <tbody className="w-full text-center">
                 {withdraws.map((withdraw) => (
                   <tr className="space-y-6 mt-2">
-                    <td>{withdraw.wallet_address}</td>
+                    <td>{show12Characters(withdraw.wallet_address)}</td>
                     <td>{withdraw.amount.toLocaleString()}</td>
                     <td>{withdraw.status}</td>
                     <td>{withdraw.datetime}</td>

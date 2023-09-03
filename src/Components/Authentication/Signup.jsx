@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Label, Button, TextInput, Checkbox, Spinner } from "flowbite-react";
+import { Label, Button, TextInput, Spinner } from "flowbite-react";
 import AppSettings from "../../app.settings.json";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 import { Toast } from "../Helpers/Toast";
 import { BsCurrencyBitcoin } from "react-icons/bs";
 import { FaEthereum } from "react-icons/fa";
@@ -17,7 +18,6 @@ export const Signup = () => {
     email: "",
     pass: "",
     confirm_pass: "",
-    phone: "",
     pin_code: "",
   });
   const [errorInfo, setErrorInfo] = useState({
@@ -25,6 +25,10 @@ export const Signup = () => {
     message: "",
   });
   const [emailError, setEmailErorr] = useState({
+    status: false,
+    message: "",
+  });
+  const [passwordError, setPasswordError] = useState({
     status: false,
     message: "",
   });
@@ -40,8 +44,16 @@ export const Signup = () => {
   const register = async (e) => {
     e.preventDefault();
     setLoader(true);
-    console.log(userData.pass);
-    if (userData.pass.length >= 6) {
+
+    if (userData.pass.length < 6) {
+      toast.error("Your password should contain at least 6 characters.");
+      setErrorInfo({
+        status: false,
+        message: "",
+      });
+    } else if (userData.pin_code.length < 5) {
+      toast.error("Pin code should be at least 5 characters.");
+    } else {
       const { confirm_pass, ...userDataToSend } = userData;
       await axios
         .post(`${AppSettings.APIserver}/register`, userDataToSend)
@@ -73,19 +85,28 @@ export const Signup = () => {
           }
         })
         .catch((e) => console.log(e));
-    } else {
-      setErrorInfo({
-        status: false,
-        message: "",
-      });
     }
     setLoader(false);
   };
 
+  useEffect(() => {
+    if (userData.pass !== userData.confirm_pass) {
+      setPasswordError({
+        status: true,
+        message: "Passwords not match",
+      });
+    } else {
+      setPasswordError({
+        status: false,
+        message: "",
+      });
+    }
+  }, [userData.confirm_pass]);
+
   return (
     <div className="flex justify-center items-center w-full items-center bg-gray-100 h-screen dark:bg-gray-600">
       <Toast left="left-100" top="top-100" />
-      <div className="p-2 shadow-lg flex flex-cols w-full m-auto bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-900">
+      <div className="p-2 shadow-lg flex flex-cols w-4/5 m-auto bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-900">
         <div className="flex-1 flex flex-col items-start px-4 pt-10  px-4 border-r">
           <h2 className="text-3xl font-bold mt-2 mb-6 font-400 text-gray-600 border-b pb-4 block dark:text-gray-100">
             Create Account and trade safely
@@ -182,37 +203,34 @@ export const Signup = () => {
             <div className="flex-1">
               <Label htmlFor="username" value="Confirm Password" />
               <TextInput
+                color={passwordError.status ? "failure" : "gray"}
                 id="confirm_pass"
                 required
                 shadow
                 type="password"
                 value={userData.confirm_pass}
-                onChange={(e) =>
-                  setUserData({ ...userData, confirm_pass: e.target.value })
+                helperText={
+                  passwordError.status && (
+                    <span className="font-medium">{passwordError.message}</span>
+                  )
                 }
+                onChange={(e) => {
+                  setUserData({
+                    ...userData,
+                    confirm_pass: e.target.value,
+                  });
+                }}
               />
             </div>
           </div>
           <div className="flex flex-row space-x-2 flex-wrap">
-            <div className="flex-1">
-              <Label htmlFor="username" value="Phone number" />
-              <TextInput
-                id="phone"
-                required
-                shadow
-                type="number"
-                value={userData.phone}
-                onChange={(e) =>
-                  setUserData({ ...userData, phone: e.target.value })
-                }
-              />
-            </div>
             <div className="flex-2">
-              <Label htmlFor="username" value="PIN code" />
+              <Label htmlFor="username" value="5-digit PIN code" />
               <TextInput
                 id="code"
                 required
                 shadow
+                maxlength="5"
                 type="text"
                 value={userData.pin_code}
                 onChange={(e) =>
@@ -221,23 +239,14 @@ export const Signup = () => {
               />
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Checkbox id="agree" />
-            <Label htmlFor="agree">
-              I agree with the
-              <a
-                className="ml-1 text-cyan-600 hover:underline dark:text-cyan-500"
-                href="#"
-              >
-                Terms and conditions
-              </a>
-            </Label>
-          </div>
           <ReCAPTCHA
             sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
             onChange={onVerify}
           />
-          <Button type="submit" disabled={loader || isBot}>
+          <Button
+            type="submit"
+            disabled={loader || isBot || passwordError.status}
+          >
             {!loader ? (
               <span>Register new account</span>
             ) : (

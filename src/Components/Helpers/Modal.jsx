@@ -3,15 +3,27 @@ import { GlobalContext } from "../../App";
 export const Modal = ({ setPopup, popupData }) => {
   const { balance } = useContext(GlobalContext);
 
-  console.log("Balance:", balance);
-  console.log("popup data:", popupData);
-  console.log("status :", popupData.status);
-  console.log("error code :", popupData.status_code);
-  console.log(
-    "status:",
-    popupData.status === "failed" && popupData.error_code === "max_amount"
-  );
-
+  const getMessage = () => {
+    if (popupData.status === "success") {
+      return "Your withdrawal request has been received, please check you email in approx 30 mins for a confirmation email that your funds havebeen sent.";
+    } else if (
+      popupData.status === "failed" &&
+      popupData.status_code === "max_amount"
+    )
+      return `Maximuim withdraw for you account is ${balance}`;
+    else if (
+      popupData.status === "failed" &&
+      popupData.status_code === "wrong_pin"
+    )
+      return "Wrong 5-digit PIN code";
+    else if (
+      popupData.status === "failed" &&
+      popupData.status_code === "max_amount_reached"
+    ) {
+      return "You can't withdraw more than 25$ from your account!";
+    } else
+      return "Sorry your 5-digit PIN is incorrect. Please try again. This is the PIN you created during registration";
+  };
   return (
     <div
       id="defaultModal"
@@ -54,12 +66,7 @@ export const Modal = ({ setPopup, popupData }) => {
 
           <div class="p-6 space-y-6">
             <p class="text-md leading-relaxed text-gray-500 dark:text-gray-400">
-              {popupData.status === "success"
-                ? "Your withdrawal request has been received, please check you email in approx 30 mins for a confirmation email that your funds havebeen sent."
-                : popupData.status === "failed" &&
-                  popupData.status_code === "max_amount"
-                ? `Maximuim withdraw for you account is ${balance}`
-                : "Sorry your 5-digit PIN is incorrect. Please try again. This is the PIN you created during registration."}
+              {getMessage()}
             </p>
           </div>
 

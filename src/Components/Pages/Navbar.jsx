@@ -6,7 +6,8 @@ import { capitalizeFirstLetter } from "../../App";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../App";
 
-export const HomeNavbar = () => {
+export const HomeNavbar = (props) => {
+  const { setOpen } = props;
   const { balance, setBalance, prices } = useContext(GlobalContext);
   const [showProfile, setShowProfile] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -17,8 +18,6 @@ export const HomeNavbar = () => {
 
   let to_fixed = balance.toString().length > 6 ? 4 : 6;
   if (balance === 0) to_fixed = 0;
-
-  console.log("to_fixed", to_fixed);
 
   useEffect(() => {
     let info = JSON.parse(localStorage.getItem("usr_info"));
@@ -164,6 +163,16 @@ export const HomeNavbar = () => {
               <li>
                 <span class="block px-4 py-2 font-bold dark:hover:bg-gray-600 dark:hover:text-white">
                   Account: {userInfo.account_type}
+                </span>
+              </li>
+              <li>
+                <span class="block px-4 py-2 font-bold dark:hover:bg-gray-600 dark:hover:text-white">
+                  <button
+                    className="bg-blue-600 text-white p-1.5 rounded text-sm"
+                    onClick={() => setOpen(true)}
+                  >
+                    Change Password
+                  </button>
                 </span>
               </li>
             </ul>

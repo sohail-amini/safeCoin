@@ -36,7 +36,6 @@ export const Transfer = () => {
       await fetch(`${AppSettings.APIserver}/check_balance/${info.id}`)
         .then((res) => res.json())
         .then((res) => {
-          console.log("Balance:", res);
           setBalance(res.balance);
         });
     };
@@ -45,50 +44,63 @@ export const Transfer = () => {
     fetch_all_transfer();
   }, []);
 
+  const showToast = (message) => {
+    toast((t) => (
+      <span className="flex flex-row items-center">
+        <span className="font-500">{message}</span>
+        <button
+          className="bg-gray-100 p-1 border border-gray-200 rounded text-sm"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          Dismiss
+        </button>
+      </span>
+    ));
+  };
+
   const createTransfer = async (e) => {
     e.preventDefault();
     setLoader(true);
 
-    console.log(info.id);
-    console.log(transferInfo);
-
-    if (transferInfo.receiver === transferInfo.sender) {
-      toast((t) => (
-        <span className="flex flex-row items-center">
-          <span>You can't transfer amount to your account</span>
-          <button
-            className="bg-gray-100 p-1 border border-gray-200 rounded text-sm"
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Dismiss
-          </button>
-        </span>
-      ));
+    if (transferInfo.amount > 1000) {
       setLoader(false);
-    } else
-      await axios
-        .post(`${AppSettings.APIserver}/transfer`, {
-          ...transferInfo,
-          senderId: info.id,
-        })
-        .then((res) => {
-          if (res.data.message === "user_not_found") setUserNotFound(true);
-          else {
-            setBalance(res.data.balance.toFixed(2));
-            setTransferInfo({
-              ...transferInfo,
-              receiver: "",
-              amount: "",
-            });
-            toast.success("Transfered successfully");
-            fetch_all_transfer();
-          }
-          setLoader(false);
-        })
-        .catch((e) => {
-          setLoader(false);
-          toast.error("Something went wrong");
-        });
+      showToast("Maximum amount for each transfer is 1,000$");
+    } else {
+      if (transferInfo.receiver === transferInfo.sender) {
+        setLoader(false);
+        showToast("You can only transfer to other users of the site!");
+      } else
+        await axios
+          .post(`${AppSettings.APIserver}/transfer`, {
+            ...transferInfo,
+            senderId: info.id,
+          })
+          .then((res) => {
+            console.log("response", res);
+            if (res.data.key === "max_transfer_amount")
+              toast.error(
+                "You reached max transfer amount $5000. and can't transfer more."
+              );
+            else if (res.data.message === "user_not_found")
+              setUserNotFound(true);
+            else {
+              setBalance(res.data.balance.toFixed(2));
+              setTransferInfo({
+                ...transferInfo,
+                receiver: "",
+                amount: "",
+              });
+              toast.success("Transfered successfully");
+              fetch_all_transfer();
+            }
+            setLoader(false);
+          })
+          .catch((e) => {
+            console.log(e);
+            setLoader(false);
+            toast.error("Something went wrong");
+          });
+    }
   };
 
   return (
@@ -102,6 +114,26 @@ export const Transfer = () => {
           }`}
           onSubmit={createTransfer}
         >
+          <div
+            class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+            role="alert"
+          >
+            <svg
+              class="flex-shrink-0 inline w-4 h-4 mr-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <span class="sr-only">Info</span>
+            <div>
+              <span class="font-medium">
+                You can only transfer to other users of the site!
+              </span>
+            </div>
+          </div>
           <div
             class="p-4 mb-4 text-green-800 rounded-lg bg-green-100 dark:bg-gray-800 dark:text-green-400"
             role="alert"
@@ -175,7 +207,7 @@ export const Transfer = () => {
               id="amount"
               class={` shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light`}
               required
-              placeholder="$10  Maximuim Per Transfer"
+              placeholder="$1,000  Maximum Per Transfer"
             />
           </div>
 
