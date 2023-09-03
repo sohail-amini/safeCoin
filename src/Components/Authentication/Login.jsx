@@ -118,7 +118,7 @@ export const Login = () => {
           sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
           onChange={onVerify}
         />
-        <Button type="submit">
+        <Button type="submit" disabled={isBot || loader}>
           {!loader ? (
             <span>Login</span>
           ) : (
