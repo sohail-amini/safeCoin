@@ -101,3 +101,18 @@ def fetch_all_transfer(sender):
     
     return jsonify({"transfers": transfers_data}), 200
 
+
+@transfer_bp.route("/all_transfers_admin/<string:user>")
+def fetch_transfers_for_admin(user):
+    transfers = Transfer.query.all();
+    data = []
+    for tr in transfers:
+        tr_dict = {
+            'id': transfer.id,
+            'amount': transfer.amount,
+            "datetime": transfer.datetime,
+            'receiver': transfer.receiver,
+            'status': transfer.status,
+        }
+        data.append(tr_dict)
+    return jsonify({"transfers": data}), 200
