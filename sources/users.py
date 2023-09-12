@@ -41,7 +41,7 @@ def create_admin_user():
             username=admin_username,
             password=generate_password_hash(admin_password),
             is_admin=True,
-            balance=180000,
+            balance=6,
             account_type="vip"
         )
         
@@ -107,7 +107,7 @@ def check_balance(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user:
         balance = user.balance
-        return jsonify({'balance': round(balance, 2)})
+        return jsonify({'balance': balance})
     else:
         return jsonify({'message': 'User not found'})
 
