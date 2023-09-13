@@ -59,7 +59,7 @@ def track_invoice(pk):
 def create_payment(pk):
     product = Product.query.get(pk)
     url = 'https://www.blockonomics.co/api/new_address'
-    headers = {'Authorization': "Bearer " + "E9MYfzValcohfTq2jBh8o7DLukXsRzMQY2slYVypGhM"}
+    headers = {'Authorization': "Bearer " + "zpMND5ZBSM5vJ84UmLvGlNU0UlYZQytiQR9dGvE0K20"}
     r = requests.post(url, headers=headers)
     print(r.text)
     if r.status_code == 200:

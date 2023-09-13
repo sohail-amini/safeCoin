@@ -7,7 +7,7 @@ from sources.users import users_bp, User, create_admin_user
 from sources.investment import investment_bp
 from sources.transfer import transfer_bp
 from sources.payments import payment_bp
-from sources.products import product_bp
+from sources.products import product_bp, add_products_to_database
 from sources.invoice import invoice_bp
 from sources.withdraw import withdraw_bp
 from flask_cors import CORS
@@ -36,6 +36,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
     create_admin_user()
+    add_products_to_database()
 
 if __name__ == "__main__":
     app.run(debug=False, host=os.getenv("FLASK_RUN_HOST"), port=os.getenv("FLASK_RUN_PORT"))

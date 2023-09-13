@@ -51,3 +51,45 @@ def create_product():
     db.session.commit()
 
     return jsonify({"message": "Product created successfully."}), 201
+
+def add_products_to_database():
+      # Check if the Products table is empty
+    if db.session.query(Product).count() == 0:
+        products_data = [
+            {
+                "id": 1,
+                "description": "package1",
+                "price": 0.1,
+                "title": "Basic Plan",
+                "subtitle": "5% After 24 hours",
+            },
+            {
+                "id": 2,
+                "description": "package2",
+                "price": 0.1,
+                "title": "Corporate Plan",
+                "subtitle": "12% After 48 hours",
+            },
+            {
+                "id": 3,
+                "description": "package3",
+                "price": 0.1,
+                "title": "Platinum Plan",
+                "subtitle": "20% After 72 hours",
+            },
+        ]
+
+        # Add the product instances to the database session
+        with db.session.begin_nested():
+            for product_data in products_data:
+                new_product = Product(
+                    id=product_data["id"],
+                    description=product_data["description"],
+                    price=product_data["price"],
+                    title=product_data["title"],
+                    subtitle=product_data["subtitle"],
+                )
+                db.session.add(new_product)
+
+        # Commit the changes to the database
+        db.session.commit()
