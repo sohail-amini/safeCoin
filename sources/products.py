@@ -31,7 +31,6 @@ def get_all_products():
             "price": float(product.price), 
         }
         product_list.append(product_data)
-    print(product_list)
     return jsonify(product_list)
 
 @product_bp.route("/products", methods=["POST"])
