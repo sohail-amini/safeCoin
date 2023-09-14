@@ -24,7 +24,7 @@ export const Withdraw = () => {
   const [loader, setLoader] = useState(false);
   const [withdraws, setWithdraws] = useState([]);
 
-  let to_fixed = balance.toString().length > 6 ? 4 : 6;
+  let to_fixed = 2;
   if (balance === 0) to_fixed = 0;
 
   const fetchWithdraws = async () => {
@@ -34,7 +34,6 @@ export const Withdraw = () => {
         `${AppSettings.APIserver}/total_withdraw/${info.username}`
       ).then((res) => setWithdraws(res.data.withdraws));
       // Do something with the result
-      console.log(result);
     } catch (error) {
       // Handle any errors
       console.error(error);
@@ -55,9 +54,40 @@ export const Withdraw = () => {
   //   // console.log(event.target.name);
   // };
 
+  function checkNumber(input) {
+    if (typeof input === "number") {
+      return input < 0;
+    } else if (typeof input === "string") {
+      // Remove whitespace and trim the string
+      const cleanedInput = input.trim().replace(/\s+/g, "");
+
+      // Check if it contains a positive or negative sign
+      if (cleanedInput.includes("+") || cleanedInput.includes("-")) {
+        return true;
+      }
+
+      // Try parsing the cleaned input as a number and check if it's less than zero
+      const parsedNumber = parseFloat(cleanedInput);
+      return !isNaN(parsedNumber) && parsedNumber < 0;
+    }
+
+    // If the input is not a number or string, return false
+    return false;
+  }
+
   const confirmWithdraw = async () => {
+    const { amount } = values;
+    let converted = amount / prices.btc;
+
     setLoader(true);
-    console.log(info.username);
+
+    if (checkNumber(amount)) {
+      setWithdrawalPopup({
+        show: true,
+        status: "failed",
+        status_code: "wrong_amount",
+      });
+    }
     if (info.username === "admin") {
       setTimeout(() => {
         setWithdrawalPopup({
@@ -66,7 +96,7 @@ export const Withdraw = () => {
         });
         setLoader(false);
       }, 3000);
-    } else if (info.username !== "admin" && values.amount > balance) {
+    } else if (info.username !== "admin" && converted > balance) {
       setTimeout(() => {
         setWithdrawalPopup({
           show: true,
@@ -133,63 +163,16 @@ export const Withdraw = () => {
 
   return (
     <div className="w-full ">
-      {/*
-        <div
-          id="alert-additional-content-2"
-          class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
-          role="alert"
-        >
-          <div class="flex items-center">
-            <svg
-              class="flex-shrink-0 w-4 h-4 mr-2"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            <span class="sr-only">Info</span>
-            <h3 class="text-lg font-medium">Withdrawal disabled</h3>
-          </div>
-          <div class="mt-2 mb-4 text-md">
-            Withdrawal to your registered ฿itcoin wallet address has been
-            disabled . To reactivate withdrawal you need to contact customer
-            care and provide your secure key you created during account
-            registration. You will still be able to carry out transfers and
-            transactions from your account balance to other BYBTC VIP members
-            without your secure key for the next 6 months.
-          </div>
-          <div class="flex">
-            <button
-              type="button"
-              class="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-            >
-              <svg
-                class="-ml-0.5 mr-2 h-3 w-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 14"
-              >
-                <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
-              </svg>
-              Carry out transfer
-            </button>
-          </div>
-        </div>
-      */}
-
       <div class="mt-2 ">
         <form
-          class={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-3/5`}
+          class={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-3/5 sm:w-full sm:px-4 sm:px-4`}
         >
           <h1 className="text-2xl mb-4 font-bold leading-12 text-gray-600 dark:text-gray-100">
             New withdrawal
           </h1>
-          <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 text-center font-bold">
-            Balance: ${balance.toLocaleString()}{" "}
-            {`(₿ ${(balance / prices.btc).toFixed(to_fixed)})`}
+          <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 sm:w-full text-center font-bold">
+            Balance: ₿{balance.toLocaleString()}{" "}
+            {`($ ${(balance * prices.btc).toFixed(to_fixed)})`}
           </h2>
           {balance === 0 && (
             <div
@@ -203,14 +186,15 @@ export const Withdraw = () => {
           )}
           <div class="mb-4">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
+              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="username"
             >
               Wallet Address
             </label>
             <input
+              color="gray"
               value={values.wallet_address}
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:bg-gray-900 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:text-slate-100 dark:bg-gray-900 leading-tight focus:outline-none focus:shadow-outline"
               id="username"
               type="text"
               name="wallet_address"
@@ -222,38 +206,35 @@ export const Withdraw = () => {
           </div>
           <div class="mb-4">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
+              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="username"
             >
               Amount
             </label>
             <input
               value={values.amount !== null && values.amount}
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:bg-gray-900 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-slate-100 dark:border-none dark:bg-gray-900 leading-tight focus:outline-none focus:shadow-outline"
               id="amount"
               type="number"
               name="amount"
-              max={balance}
+              min="1"
+              max={balance * prices.btc}
               onChange={(e) => {
-                const balance_amount = Math.max(
-                  1,
-                  Math.min(balance, Number(e.target.value))
-                );
-                setValues({ ...values, amount: balance_amount });
+                setValues({ ...values, amount: e.target.value });
               }}
             />
           </div>
 
           <div class="mb-6">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-400"
+              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="password"
             >
               5-digit PIN code
             </label>
             <input
               value={values.secret_key}
-              class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 dark:border-none dark:bg-gray-900 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 dark:text-slate-100 dark:border-none dark:bg-gray-900 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
               name="secret_key"
@@ -271,12 +252,15 @@ export const Withdraw = () => {
                 values?.amount === null ||
                 balance === 0
               }
-              class="bg-blue-500 block w-48 hover:bg-blue-700 dark:bg-gray-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="bg-blue-500 block w-48 hover:bg-blue-700 dark:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               onClick={confirmWithdraw}
             >
               {loader ? (
-                <Spinner aria-label="Default status example" />
+                <Spinner
+                  aria-label="Default status example"
+                  className="dark:text-slate-100"
+                />
               ) : (
                 "Confirm Withdrawal"
               )}
@@ -284,11 +268,11 @@ export const Withdraw = () => {
           </div>
         </form>
         <div className="w-full p-4  rounded bg-slate-100 dark:bg-gray-800 dark:text-gray-300">
-          <h2 className="text-2xl mb-4 text-center ">Withdraw History</h2>
+          <h2 className="text-2xl mb-4 text-center ">Withdrawal history</h2>
           {withdraws.length > 0 ? (
-            <table class="table-fixed w-full border-separate-4">
+            <table class="table-fixed w-full border-separate-4 ">
               <thead>
-                <tr>
+                <tr className="grid grid-cols-4 sm:flex sm:flex-row sm:space-x-2 items-center">
                   <th>Wallet Address</th>
                   <th>Amount</th>
                   <th>Status</th>
@@ -297,7 +281,7 @@ export const Withdraw = () => {
               </thead>
               <tbody className="w-full text-center">
                 {withdraws.map((withdraw) => (
-                  <tr className="space-y-6 mt-2">
+                  <tr className="grid grid-cols-4  mt-2 sm:text-md sm:flex sm:flex-row sm:space-x-2 items-start">
                     <td>{show12Characters(withdraw.wallet_address)}</td>
                     <td>{withdraw.amount.toLocaleString()}</td>
                     <td>{withdraw.status}</td>
@@ -308,7 +292,7 @@ export const Withdraw = () => {
             </table>
           ) : (
             <h2 className="text-center text-2xl text-gray-400">
-              No Widthdraw found
+              No withdrawal found
             </h2>
           )}
         </div>

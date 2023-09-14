@@ -20,7 +20,12 @@ export const Modal = ({ setPopup, popupData }) => {
       popupData.status === "failed" &&
       popupData.status_code === "max_amount_reached"
     ) {
-      return "You can't withdraw more than 25$ from your account!";
+      return "Free trial accounts can't withdraw more than $25 per month";
+    } else if (
+      popupData.status === "failed" &&
+      popupData.status_code === "wrong_amount"
+    ) {
+      return "Invalid input";
     } else
       return "Sorry your 5-digit PIN is incorrect. Please try again. This is the PIN you created during registration";
   };
@@ -32,12 +37,12 @@ export const Modal = ({ setPopup, popupData }) => {
       class="fixed flex items-center top-0 left-0 right-0 z-50 bg-themask w-full  p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       <div class="relative w-full max-w-2xl max-h-full m-auto">
-        <div class="transition transition-all duration-300 relative bg-white w-2/3	m-auto rounded-lg shadow dark:bg-gray-700">
+        <div class="transition transition-all duration-300 relative bg-white w-2/3 sm:w-4/5	m-auto rounded-lg shadow dark:bg-gray-700">
           <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
               {popupData.status === "success"
                 ? "Withdrawal was successful ✅"
-                : "Withdrawal was failed ❌"}
+                : "Withdrawal has failed ❌"}
             </h3>
             <button
               onClick={() => setPopup({ show: false })}
@@ -65,7 +70,7 @@ export const Modal = ({ setPopup, popupData }) => {
           </div>
 
           <div class="p-6 space-y-6">
-            <p class="text-md leading-relaxed text-gray-500 dark:text-gray-400">
+            <p class="text-md leading-relaxed text-gray-500 dark:text-slate-200">
               {getMessage()}
             </p>
           </div>

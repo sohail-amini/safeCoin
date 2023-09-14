@@ -33,18 +33,17 @@ export const Signup = () => {
     message: "",
   });
   const [loader, setLoader] = useState(false);
-  const [isBot, setIsBot] = useState(true);
 
-  const onVerify = (token) => {
-    if (token) {
-      setIsBot(false);
-    }
+  const sendWelcomeMessage = async () => {
+    const { username: name, email } = userData;
+
+    axios
+      .post(`${AppSettings.APIserver}/welcome_message`, { name, email })
+      .then((res) => console.log(res));
   };
-
   const register = async (e) => {
     e.preventDefault();
     setLoader(true);
-
     if (userData.pass.length < 6) {
       toast.error("Your password should contain at least 6 characters.");
       setErrorInfo({
@@ -58,7 +57,6 @@ export const Signup = () => {
       await axios
         .post(`${AppSettings.APIserver}/register`, userDataToSend)
         .then((res) => {
-          console.log(res);
           if (res.data.key === "success") {
             const { username, id, token, account_type } = res.data;
 
@@ -68,7 +66,7 @@ export const Signup = () => {
               token,
               account_type,
             };
-
+            sendWelcomeMessage();
             localStorage.setItem("usr_info", JSON.stringify(user_info));
             // localStorage.setItem("token", res.data.token)
             navigate("/home");
@@ -104,10 +102,10 @@ export const Signup = () => {
   }, [userData.confirm_pass]);
 
   return (
-    <div className="flex justify-center items-center w-full items-center bg-gray-100 h-screen dark:bg-gray-600">
+    <div className="bg flex  justify-center items-center w-full items-center bg-gray-100 h-screen dark:bg-gray-600">
       <Toast left="left-100" top="top-100" />
-      <div className="p-2 shadow-lg flex flex-cols w-4/5 m-auto bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-900">
-        <div className="flex-1 flex flex-col items-start px-4 pt-10  px-4 border-r">
+      <div className="p-2 sm:m-3 shadow-lg flex flex-cols sm:flex sm:flex-row w-4/5 sm:w-full m-auto bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-900">
+        <div className="flex-1 sm:hidden flex flex-col items-start px-4 pt-10  px-4 border-r">
           <h2 className="text-3xl font-bold mt-2 mb-6 font-400 text-gray-600 border-b pb-4 block dark:text-gray-100">
             Create Account and trade safely
           </h2>
@@ -124,14 +122,14 @@ export const Signup = () => {
               <b className="ml-2 text-xl">Ethereum</b>
             </span>
             <span className="bg-green-100 text-green-800 flex items-center text-xs font-medium mr-2 p-4 rounded dark:bg-green-900 dark:text-red-300">
-              <img src={usdt} className="h-8 w-8" />
+              <img src={usdt} className="h-8 w-8" alt="safecoin" />
               <b className="ml-2 text-xl">USDT</b>
             </span>
           </div>
         </div>
 
         <form
-          className="flex-1 flex flex-col gap-4 m-3 p-6 "
+          className="flex-1 flex flex-col gap-4 m-3 p-6 sm:m-1 sm:p-2"
           onSubmit={register}
         >
           <div>
@@ -239,14 +237,8 @@ export const Signup = () => {
               />
             </div>
           </div>
-          <ReCAPTCHA
-            sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
-            onChange={onVerify}
-          />
-          <Button
-            type="submit"
-            disabled={loader || isBot || passwordError.status}
-          >
+
+          <Button type="submit" disabled={loader || passwordError.status}>
             {!loader ? (
               <span>Register new account</span>
             ) : (

@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../App";
 
 export const HomeNavbar = (props) => {
-  const { setOpen } = props;
+  const { setOpen, setShowSidebar } = props;
   const { balance, setBalance, prices } = useContext(GlobalContext);
   const [showProfile, setShowProfile] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -97,11 +97,11 @@ export const HomeNavbar = (props) => {
         </span>
       </Navbar.Brand>
 
-      <Navbar.Brand className="flex-1 flex justify-end mr-2 ">
+      <Navbar.Brand className="flex-1 flex justify-end mr-2 sm:mr-0">
         <button
           id="theme-toggle"
           type="button"
-          class="bg-gray-50 mr-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+          className="bg-gray-50 mr-2 block sm:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
         >
           <svg
             id="theme-toggle-dark-icon"
@@ -130,10 +130,30 @@ export const HomeNavbar = (props) => {
         <img
           onClick={() => setShowProfile(!showProfile)}
           type="button"
-          class="w-10 h-10 rounded-full cursor-pointer"
+          class="w-10 h-10 sm:h-9 sm:w-9 rounded-full cursor-pointer"
           src={userProfile}
           alt="User dropdown"
         />
+
+        <button
+          onClick={() => setShowSidebar(true)}
+          type="button"
+          className="inline-flex hidden sm:block items-center ml-1 p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        >
+          <svg
+            class="w-6 h-6"
+            aria-hidden="true"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+            ></path>
+          </svg>
+        </button>
 
         {showProfile && (
           <div
@@ -155,9 +175,9 @@ export const HomeNavbar = (props) => {
                   class="block px-4 font-bold py-2 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Balance:{" "}
-                  {`$${balance.toLocaleString()} (₿ ${(
-                    balance / prices.btc
-                  ).toFixed(to_fixed)})`}
+                  {`₿${balance.toLocaleString()} ($${(
+                    balance * prices.btc
+                  ).toFixed(2)})`}
                 </span>
               </li>
               <li>
@@ -175,7 +195,22 @@ export const HomeNavbar = (props) => {
                   </button>
                 </span>
               </li>
+              <li className="flex items-center px-4">
+                <span class="block  py-2 font-bold mr-2 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Night mode
+                </span>
+                <svg
+                  id="theme-toggle-dark-icon"
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+              </li>
             </ul>
+
             <div class="py-1">
               <Link
                 onClick={() => {

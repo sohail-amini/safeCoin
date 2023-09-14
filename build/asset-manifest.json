@@ -1,7 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.1d930335.css",
-    "main.js": "/static/js/main.4767f9aa.js",
+    "main.css": "/static/css/main.5d708bd3.css",
+    "main.js": "/static/js/main.48e5bc81.js",
+    "static/media/hex-textured-background-networking.jpg": "/static/media/hex-textured-background-networking.bf47fef090d388728391.jpg",
     "static/media/bitpay.PNG": "/static/media/bitpay.f8633632d52a3b356b78.PNG",
     "static/media/binance.PNG": "/static/media/binance.92643887cb735977d3b9.PNG",
     "static/media/trustwallet.PNG": "/static/media/trustwallet.95433d09af3e47b1f354.PNG",
@@ -9,11 +10,11 @@
     "static/media/user.png": "/static/media/user.ed91b13df0e6e96294c4.png",
     "static/media/okx.PNG": "/static/media/okx.9202ecf8c466d43986a9.PNG",
     "index.html": "/index.html",
-    "main.1d930335.css.map": "/static/css/main.1d930335.css.map",
-    "main.4767f9aa.js.map": "/static/js/main.4767f9aa.js.map"
+    "main.5d708bd3.css.map": "/static/css/main.5d708bd3.css.map",
+    "main.48e5bc81.js.map": "/static/js/main.48e5bc81.js.map"
   },
   "entrypoints": [
-    "static/css/main.1d930335.css",
-    "static/js/main.4767f9aa.js"
+    "static/css/main.5d708bd3.css",
+    "static/js/main.48e5bc81.js"
   ]
 }

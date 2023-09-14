@@ -6,50 +6,21 @@ import AppSettings from "../../app.settings.json";
 import { useNavigate } from "react-router-dom";
 
 export const Invest = (props) => {
-  const { prices, pendingTransferInfo, pendingTransfer } =
-    useContext(GlobalContext);
+  const { prices, pendingTransferInfo } = useContext(GlobalContext);
   const [packages, setPackages] = useState([]);
   const navigate = useNavigate();
 
   const [loader, setLoader] = useState(false);
-  const dummyData = [
-    {
-      id: 1,
-      description: "package1",
-      price: 0.1,
-      product_id: 1,
-      title: "Basic Plan",
-      subtitle: "5% After 24 hours",
-    },
-    {
-      id: 2,
-      description: "package2",
-      price: 0.1,
-      product_id: 2,
-      title: "Corporate Plan",
-      subtitle: "12% After 48 hours",
-    },
-    {
-      id: 3,
-      description: "package3",
-      price: 0.1,
-      product_id: 3,
-      title: "Plantium Plan",
-      subtitle: "20% After 72 hours",
-    },
-  ];
+  let info = JSON.parse(localStorage.getItem("usr_info"));
+
   useEffect(() => {
     setLoader(true);
     const fetchProducts = async () => {
       await fetch(`${AppSettings.APIserver}/products`)
         .then((response) => response.json())
         .then((data) => {
-          console.log("data", data);
           setLoader(false);
           setPackages(data);
-          if (data.length === 0) {
-            setPackages(dummyData);
-          }
         })
         .catch((error) => {
           setLoader(false);
@@ -69,30 +40,48 @@ export const Invest = (props) => {
 
           {pendingTransferInfo && (
             <div
-              className="text-base p-4 my-4  text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+              className="text-base p-4 my-4 sm:p-0  text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
               role="alert"
             >
               <span className="font-medium mr-2">
                 Hello {pendingTransferInfo.receiver}!
               </span>
               The user <b> {pendingTransferInfo.sender} </b> has recently tried
-              to transfer <b> ${pendingTransferInfo.amount} </b>
+              to transfer <b> ₿{pendingTransferInfo.amount.toFixed(5)} </b>
               <b>
-                (₿{" "}
-                {(pendingTransferInfo.amount / Math.floor(prices.btc)).toFixed(
-                  6
-                )}
-                ){" "}
+                (${(pendingTransferInfo.amount * prices.btc).toFixed(2)}){" "}
               </b>{" "}
               to your account. Our system witheld the transfer because
               free-trial accounts cannot send or receive Bitcoin through our
               service. Once you make an investment in any of our VIP plans, our
               system will automatically add the{" "}
-              <b>${pendingTransferInfo.amount}</b> to your VIP account balance.
+              <b>₿{pendingTransferInfo.amount.toFixed(5)}</b> to your VIP
+              account balance.
             </div>
           )}
 
-          <div className="grid grid-cols-3 my-6 space-x-4">
+          {info.username === "admin" && (
+            <div
+              className="flex items-center p-4 mb-4 text-sm w-2/5 sm:w-full sm:text-xl sm:m-0 sm:mr-2 mt-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+              role="alert"
+            >
+              <svg
+                class="flex-shrink-0 inline w-4 h-4 mr-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+              </svg>
+              <span class="sr-only">Info</span>
+              <div>
+                <span class="font-medium">Maximum plan available.</span>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-3 my-6 sm:grid-cols-1 space-x-4 sm:space-x-0 sm:space-y-4 sm:p-0">
             {packages.map((pck) => (
               <div
                 className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
@@ -114,7 +103,7 @@ export const Invest = (props) => {
                 </span>
                 {/* <b className="text-sm">{ }</b> */}
 
-                <ul className="space-y-1 my-4 text-gray-500 list-disc list-inside ">
+                <ul className="space-y-1 my-4 text-gray-500 list-disc list-inside dark:text-slate-300">
                   <li>
                     Min invest:{" "}
                     <b>

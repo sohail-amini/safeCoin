@@ -4,6 +4,8 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Login } from "./Components/Authentication/Login";
 import { Signup } from "./Components/Authentication/Signup";
 import { HomeWrapper } from "./Components/Main/Home";
+import { Loader } from "./Components/Helpers/Loader";
+import { DarkThemeToggle } from "flowbite-react";
 import AppSettings from "./app.settings.json";
 import axios from "axios";
 
@@ -20,7 +22,7 @@ function App() {
     message: "",
   });
   const [prices, setPrices] = useState({
-    btc: 30000,
+    btc: 0,
     eth: 0,
     bnb: 0,
     xrp: 0,
@@ -31,8 +33,15 @@ function App() {
   const location = useLocation();
   const [balance, setBalance] = useState(0.0);
   const [open, setOpen] = React.useState(false);
+  const [loader, setLoader] = useState(true);
+  const [showMenu, setShowMenu] = useState(false);
 
   let userinfo = JSON.parse(localStorage.getItem("usr_info"));
+
+  useEffect(() => {
+    // if (localStorage.getItem("color-theme"))
+    localStorage.setItem("color-theme", "dark");
+  }, []);
 
   useEffect(() => {
     const pendingTransfer = async () => {
@@ -47,6 +56,7 @@ function App() {
           }
         )
           .then((res) => {
+            console.log(res);
             if (
               res.data.status === "pending" &&
               userInfo.username !== "admin"
@@ -86,7 +96,7 @@ function App() {
             setPrices({
               btc: res[0].rate.toFixed(2),
               eth: res[1].rate.toFixed(2),
-              bnb: res[4].rate.toFixed(2),
+              bnb: res[3].rate.toFixed(2),
               xrp: res[5].rate.toFixed(2),
             });
           })
@@ -111,19 +121,27 @@ function App() {
       token = JSON.parse(localStorage.getItem("usr_info")).token;
     }
 
-    axios(`${AppSettings.APIserver}/protected`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((e) => {
+    const navigate_login = async () => {
+      try {
+        await axios(`${AppSettings.APIserver}/protected`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((e) => {
+            setLoader(false);
+            navigate("/home/");
+          })
+          .catch((e) => {
+            console.log(e);
+            setLoader(false);
+            navigate("/login");
+          });
+      } catch (e) {
         console.log(e);
-        navigate("/home/");
-      })
-      .catch((e) => {
-        console.log(e);
-        navigate("/login");
-      });
+      }
+    };
+    navigate_login();
   }, []);
 
   return (
@@ -153,16 +171,26 @@ function App() {
           userinfo,
           setOpen,
           open,
+          showMenu,
+          setShowMenu,
+          setLoader,
+          loader,
         }}
       >
-        <Routes>
-          <Route path="/home/*" element={<HomeWrapper />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+        {loader ? (
+          <Loader />
+        ) : (
+          <Routes>
+            <Route
+              path="/home/*"
+              element={<HomeWrapper setShowMenu={setShowMenu} />}
+            />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        )}
       </GlobalContext.Provider>
     </div>
   );
 }
-
 export default App;

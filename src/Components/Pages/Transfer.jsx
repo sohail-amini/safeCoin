@@ -12,7 +12,7 @@ export const Transfer = () => {
   const [transferInfo, setTransferInfo] = useState({
     sender: info.username,
     receiver: "",
-    amount: "",
+    amount: null,
     status: "pending",
   });
   const [isUserNotFound, setUserNotFound] = useState(false);
@@ -31,6 +31,17 @@ export const Transfer = () => {
       });
   };
 
+  const transfers_for_admin = async () => {
+    if (info.username === "admin")
+      await fetch(
+        `${AppSettings.APIserver}/all_transfers_admin/${info.username}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setTransfers(data.transfers);
+        });
+  };
+
   useEffect(() => {
     const check_balance = async () => {
       await fetch(`${AppSettings.APIserver}/check_balance/${info.id}`)
@@ -42,6 +53,7 @@ export const Transfer = () => {
     check_balance();
 
     fetch_all_transfer();
+    transfers_for_admin();
   }, []);
 
   const showToast = (message) => {
@@ -61,7 +73,6 @@ export const Transfer = () => {
   const createTransfer = async (e) => {
     e.preventDefault();
     setLoader(true);
-
     if (transferInfo.amount > 1000) {
       setLoader(false);
       showToast("Maximum amount for each transfer is 1,000$");
@@ -73,6 +84,7 @@ export const Transfer = () => {
         await axios
           .post(`${AppSettings.APIserver}/transfer`, {
             ...transferInfo,
+            amount: transferInfo.amount / prices.btc,
             senderId: info.id,
           })
           .then((res) => {
@@ -107,15 +119,15 @@ export const Transfer = () => {
     <div className="w-full flex-1">
       <InsideNav name="transfer" />
 
-      <div className="flex  flex-col space-y-4">
+      <div className="flex flex-col space-y-4">
         <form
-          className={`w-3/5 mt-4 flex-1 border border-gray-100 dark:border-none p-6 rounded shadow-md dark:bg-gray-600 ${
+          className={`w-3/5 sm:w-full sm:px-3  mt-4 flex-1 border border-gray-100 dark:border-none p-6 rounded shadow-md dark:bg-gray-800 ${
             pendingTransfer && "opacity-40"
           }`}
           onSubmit={createTransfer}
         >
           <div
-            class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+            class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-900 dark:text-red-400 dark:border-red-800"
             role="alert"
           >
             <svg
@@ -135,15 +147,13 @@ export const Transfer = () => {
             </div>
           </div>
           <div
-            class="p-4 mb-4 text-green-800 rounded-lg bg-green-100 dark:bg-gray-800 dark:text-green-400"
+            class="p-4 mb-4 text-green-800 rounded-lg bg-green-100 dark:bg-gray-900 dark:text-green-400"
             role="alert"
           >
-            <span class="font-base"> Balance:</span> ${""}
+            <span class="font-base"> Balance:</span> ₿{""}
             {balance.toLocaleString()}
             {""}
-            <b className="ml-1">
-              {`( ₿ ${(balance / prices.btc).toFixed(to_fixed)})`}{" "}
-            </b>
+            <b className="ml-1">{`($${(balance * prices.btc).toFixed(2)})`} </b>
           </div>
 
           {balance === 0 && (
@@ -196,13 +206,9 @@ export const Transfer = () => {
               disabled={pendingTransfer}
               value={transferInfo.amount}
               onChange={(e) => {
-                const balance_amount = Math.max(
-                  1,
-                  Math.min(balance, Number(e.target.value))
-                );
-                setTransferInfo({ ...transferInfo, amount: balance_amount });
+                setTransferInfo({ ...transferInfo, amount: e.target.value });
               }}
-              max={balance}
+              max={1000}
               type="number"
               id="amount"
               class={` shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light`}
@@ -244,40 +250,47 @@ export const Transfer = () => {
           </button>
         </form>
 
-        <div className="">
-          <div class="flex-1  relative shadow-md sm:rounded-lg dark:bg-gray-800 dark:text-white">
-            <h2 className="text-2xl border dark:border-none  rounded p-2 mb-2">
+        <div>
+          <div className="flex-1 relative shadow-md sm:rounded-lg dark:bg-gray-800 dark:text-white sm:w-full">
+            <h2
+              className="text-2xl border dark:border-none p-4 mb-2 dark:border-b-1 dark:border-slate-100"
+              style={{ borderBottom: "1px solid #eee" }}
+            >
               Recent Transfer
             </h2>
-            <table class="w-full mt-4 text-sm text-left text-gray-500 dark:text-gray-400 ">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:bg-gray-800">
+            <table className="w-full mt-4 text-sm text-left text-gray-500 dark:text-gray-400 ">
+              <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-slate-200 dark:bg-gray-800">
                 <tr>
-                  <th scope="col" class="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 sm:px-1">
                     To user
                   </th>
-                  <th scope="col" class="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 sm:px-1">
                     Amount
                   </th>
-                  <th scope="col" class="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 sm:px-1">
                     Status
                   </th>
-                  <th scope="col" class="px-6 py-3">
+                  <th scope="col" class="px-6 py-3 sm:px-1">
                     Date
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {transfers.map((transfer) => (
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 dark:text-slate-200">
                     <th
                       scope="row"
-                      class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      class="px-6 py-4 sm:px-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       {transfer.receiver}
                     </th>
-                    <td class="px-6 py-4">{transfer.amount}$</td>
-                    <td class="px-6 py-4">{transfer.status}</td>
-                    <td class="px-6 py-4">{transfer.datetime}</td>
+                    <td class="px-6 py-4 sm:px-1">
+                      ${(transfer.amount * prices.btc).toFixed(2)}
+                    </td>
+                    <td class="px-6 py-4 sm:px-1">
+                      {info.username === "admin" ? "Success" : transfer.status}
+                    </td>
+                    <td class="px-6 py-4 sm:px-1">{transfer.datetime}</td>
                   </tr>
                 ))}
               </tbody>

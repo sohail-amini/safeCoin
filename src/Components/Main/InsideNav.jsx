@@ -7,14 +7,14 @@ export const InsideNav = ({ name }) => {
   const navigate = useNavigate();
   return (
     <nav className="flex flex-col space-y-2" aria-label="Breadcrumb">
-      <div className="block grid grid-cols-4 text-center">
+      <div className="block grid grid-cols-4 md:m-auto sm:w-full md:mb-4 text-center sm:grid-cols-1 sm:space-y-2">
         <span className="py-4 px-2 text-base bg-blue-100 text-blue-800 font-medium mr-2 rounded dark:bg-blue-900 dark:text-blue-300">
           Bitcoin: ${prices.btc}
         </span>
         <span className="bg-gray-100 text-gray-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-gray-900 dark:text-gray-300">
           Ethereum: ${prices.eth}
         </span>
-        <span className="bg-red-100 text-red-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-red-700 dark:text-red-200">
+        <span className="bg-red-100 text-red-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-teal-800 dark:text-teal-100">
           BNB ${prices.bnb}
         </span>
         <span className="bg-green-100 text-green-800 text-base font-medium mr-2 py-4 px-2 rounded dark:bg-green-700 dark:text-green-300">

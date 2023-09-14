@@ -31,7 +31,6 @@ export const Login = () => {
       .post(`${AppSettings.APIserver}/login`, userData)
       .then((res) => {
         if (res.status === 200) {
-          console.log(res);
           const { username, id, token, account_type } = res.data;
 
           let user_info = {
@@ -61,19 +60,26 @@ export const Login = () => {
       })
       .catch((e) => {
         setLoader(false);
-        console.log(e);
-        setToast({
-          show: true,
-          message: e.response.data.message,
-        });
+        console.log(e.code);
+        if (e.code === "ERR_NETWORK")
+          setToast({
+            show: true,
+            message: "Something went wrong!",
+          });
+        else {
+          setToast({
+            show: true,
+            message: e.response.data.message,
+          });
+        }
       });
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 dark:bg-gray-600 h-screen">
+    <div className="flex justify-center items-center bg-gray-100 dark:bg-gray-600 h-screen bg">
       <Toast left="left-10" top="top-10" />
       <form
-        className="bg-white rounded flex flex-col gap-4 dark:bg-gray-800 border border-gray-100 dark:border-gray-600 w-1/3 p-5 m-auto"
+        className="bg-white rounded flex flex-col gap-4 dark:bg-gray-800 border border-gray-100 dark:border-gray-600 w-1/3 sm:w-full sm:mx-4 p-5 m-auto"
         onSubmit={login}
       >
         <div>
@@ -81,6 +87,7 @@ export const Login = () => {
             <Label htmlFor="username" value="Username" />
           </div>
           <TextInput
+            color="gray"
             id="username"
             placeholder="Username"
             required
@@ -114,10 +121,12 @@ export const Login = () => {
             Forgot password
           </a>
         </div>
-        <ReCAPTCHA
-          sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
-          onChange={onVerify}
-        />
+        <div className="flex justify-center w-full">
+          <ReCAPTCHA
+            sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
+            onChange={onVerify}
+          />
+        </div>
         <Button type="submit" disabled={isBot || loader}>
           {!loader ? (
             <span>Login</span>

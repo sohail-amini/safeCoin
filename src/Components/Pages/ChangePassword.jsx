@@ -52,9 +52,11 @@ export function ChangePassword() {
 
   return (
     <div className="fixed bg-themask flex justify-center items-center top-0 left-0 right-0 bottom-0 z-50 w-full ">
-      <div className="w-2/5 bg-white p-6 rounded">
+      <div className="w-2/5 bg-white p-6 rounded dark:bg-gray-600">
         <div className="flex justify-between">
-          <h2 className="font-bold text-xl">Change Password</h2>
+          <h2 className="font-bold text-xl dark:text-slate-100">
+            Change Password
+          </h2>
           <button
             onClick={() => handleOpen(!open)}
             type="button"
@@ -132,7 +134,7 @@ export function ChangePassword() {
           <div className="my-2">
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-slate-100"
             >
               Confirm password
             </label>
@@ -157,7 +159,7 @@ export function ChangePassword() {
                 error.shown &&
                 error.key === "not_match" &&
                 "border-1 border-red-400 outline-red-600"
-              } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+              } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
               required
             />
             {error.shown && error.key === "not_match" ? (
@@ -171,7 +173,7 @@ export function ChangePassword() {
           <button
             onClick={() => handleOpen(!open)}
             type="button"
-            class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
           >
             Close
           </button>
