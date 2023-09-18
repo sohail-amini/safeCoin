@@ -13,6 +13,7 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255))
+    user_role = db.Column(db.String(255))
     password = db.Column(db.String(255))
     email = db.Column(db.String(255))
     pin_code = db.Column(db.String(255))
@@ -32,15 +33,17 @@ users_bp = Blueprint("users", __name__)
 def create_admin_user():
     admin_username = 'admin'
     admin_password = 'admin'
+    user_role = "admin"
 
     admin_user = User.query.filter_by(username=admin_username).first()
     current_date = datetime.now()
     four_months_ago = current_date - timedelta(days=30*4)
     eight_months_ago = current_date - timedelta(days=30*8)
-
+    
     if admin_user is None:
         admin_user = User(
             username=admin_username,
+            user_role=user_role, 
             password=generate_password_hash(admin_password),
             is_admin=True,
             balance=6,
@@ -130,7 +133,8 @@ def login():
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
-                "account_type": user.account_type
+                "account_type": user.account_type,
+                "user_role": user.user_role
             }
             access_token = create_access_token(identity=user.username)
             response["token"] = access_token

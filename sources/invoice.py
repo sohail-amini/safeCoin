@@ -9,10 +9,12 @@ from sources.products import Product
 
 invoice_bp = Blueprint("invoice", __name__)
 
+
 class Invoice(db.Model):
     __tablename__ = "invoice"
     id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey(
+        "product.id"), nullable=False)
     status = db.Column(db.Integer, default=-1)
     order_id = db.Column(db.String(250))
     address = db.Column(db.String(250), nullable=True)
@@ -35,6 +37,7 @@ def exchange_rate(amount):
     response = r.json()
     return amount / response['price']
 
+
 @invoice_bp.route("/invoice/<int:pk>")
 def track_invoice(pk):
     invoice = Invoice.query.get(pk)
@@ -55,19 +58,22 @@ def track_invoice(pk):
 
     return jsonify(data)
 
+
 @invoice_bp.route("/create_payment/<int:pk>")
 def create_payment(pk):
     product = Product.query.get(pk)
     url = 'https://www.blockonomics.co/api/new_address'
-    headers = {'Authorization': "Bearer " + "zpMND5ZBSM5vJ84UmLvGlNU0UlYZQytiQR9dGvE0K20"}
+    headers = {'Authorization': "Bearer " +
+               "zpMND5ZBSM5vJ84UmLvGlNU0UlYZQytiQR9dGvE0K20"}
     r = requests.post(url, headers=headers)
-    print(r.text)
+    
     if r.status_code == 200:
         address = r.json()['address']
         bits = exchange_rate(product.price)
         print("btcvalue=:", bits*1e8)
         order_id = str(uuid.uuid1())
-        invoice = Invoice(order_id=order_id, address=address, btcvalue=bits*1e8, status=-1)
+        invoice = Invoice(order_id=order_id, address=address,
+                          btcvalue=bits*1e8, status=-1)
         product.invoices.append(invoice)
         db.session.add(invoice)
         db.session.commit()
@@ -77,7 +83,8 @@ def create_payment(pk):
             "bits": bits
         })
     else:
-        return jsonify({"error": "Some Error, Try Again!"})
+        return jsonify({"error": "Some Error, Try Again!", "message" : r.text})
+
 
 @invoice_bp.route("/receive_payment", methods=["GET"])
 def receive_payment():

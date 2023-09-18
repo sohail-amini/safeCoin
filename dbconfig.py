@@ -6,16 +6,17 @@ from sqlalchemy import create_engine
 db = SQLAlchemy()
 
 def config(app):
-    # password = urllib.parse.quote_plus(os.getenv("DB_PASSWORD"))
-    # dbName = os.getenv("DB_NAME")
-    # host = os.getenv("DB_HOST")
-    # port = os.getenv("DB_PORT")
-    # user = os.getenv("DB_USER")
+    # Define the URI for your SQLite database file.
+    sqlite_uri = "sqlite:///your_database_file.db"
 
-    # app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://safecoin_user:5l6itOHTqLZe8JURdUnjy2AqNTZWwdmd@dpg-ci5ml65ph6eh6mp9s0rg-a.oregon-postgres.render.com/safecoin"
-    # app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{user}:{password}@{host}:{port}/{dbName}"
-    # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///your_database_file.db"
+    # Configure the default database URI.
+    app.config["SQLALCHEMY_DATABASE_URI"] = sqlite_uri
+
+    # Disable modification tracking (optional).
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    # TODO It allow to your packages to show their exceptions
-    # app.config["PROPAGATE_EXCEPTIONS"] = True
+
+    # Create a dictionary to specify multiple database bindings.
+    app.config["SQLALCHEMY_BINDS"] = {
+        "default": sqlite_uri  # Bind the default database to your SQLite file.
+        # You can add more binds here if needed for other databases.
+    }
