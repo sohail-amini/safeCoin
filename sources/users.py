@@ -47,7 +47,7 @@ def create_admin_user():
             password=generate_password_hash(admin_password),
             is_admin=True,
             balance=6,
-            account_type="vip"
+            account_type="Gold"
         )
 
         four_months_ago_date = four_months_ago.strftime('%d-%m-%Y')
@@ -62,7 +62,6 @@ def create_admin_user():
         print('Admin user created successfully!')
     else:
         print('Admin user already exists.')
-
 
 def create_admin_withdraw(amount, date):
     widthdraw = Withdraw()
@@ -93,8 +92,9 @@ def create_user():
         email=json['email'],
         password=generate_password_hash(json['pass']),
         pin_code=json['pin_code'],
+        user_role= "basic",
         balance=0,
-        account_type="Basic"
+        account_type="Bronze"
     )
 
     save_to_db(user)

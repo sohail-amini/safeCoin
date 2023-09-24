@@ -24,30 +24,33 @@ server.starttls()
 
 @smtp_bp.route("/welcome_message", methods=["POST"])
 def send_welcome():
-    server.login(email_address, email_password)
-    json_d = request.get_json()
-    print("json_data", json_d["name"])
-    print("json_data", json_d["email"])
-    # Create a message
-    name = json_d["name"]
-    subject = f'Welcome To SafeCoin!'
-    body = f"Hello {name}, We are thrilled to welcome you to SafeCoin, your trusted gateway to the exciting world of cryptocurrencies. SafeCoin is your one-stop destination for all things crypto, and we're here to help you navigate this ever-evolving landscape. Whether you're an experienced trader or just getting started, you're in the right place."
-    recipient = json_d["email"]
+    try:
+        server.login(email_address, email_password)
+        json_d = request.get_json()
+        
+        # Create a message
+        name = json_d["name"]
+        subject = f'Welcome To SafeCoin!'
+        body = f"Hello {name}, We are thrilled to welcome you to SafeCoin, your trusted gateway to the exciting world of cryptocurrencies. SafeCoin is your one-stop destination for all things crypto, and we're here to help you navigate this ever-evolving landscape. Whether you're an experienced trader or just getting started, you're in the right place."
+        recipient = json_d["email"]
 
-    msg = MIMEMultipart()
-    msg['From'] = email_address
-    msg['To'] = recipient
-    msg['Subject'] = subject
+        msg = MIMEMultipart()
+        msg['From'] = email_address
+        msg['To'] = recipient
+        msg['Subject'] = subject
 
-    msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(body, 'plain'))
 
-    # Send the email
-    server.sendmail(email_address, recipient, msg.as_string())
+        # Send the email
+        server.sendmail(email_address, recipient, msg.as_string())
 
-    # Quit the server
-    server.quit()
+        # Quit the server
+        server.quit()
 
-    return "Email sent successfully"
+        return "Email sent successfully"
+    except Exception  as e:
+        return "Something went wrong!"
+
 
 
 @smtp_bp.route("/send_email", methods=["POST"])
