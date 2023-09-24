@@ -3,3 +3,4 @@ python-dotenv
 SQLAlchemy==2.0.9
 requests
 bcrypt
+flask_sqlalchemy
