@@ -3,7 +3,6 @@ import { HomeNavbar } from "../Pages/Navbar";
 import { Sidebar } from "./Sidebar";
 import { Withdraw } from "../Pages/Withdraw";
 import { Main } from "./Main";
-import { Recharge } from "../Pages/Recharge";
 import { Invest } from "../Pages/Invest";
 import { Transfer } from "../Pages/Transfer";
 import { Deposite } from "../Pages/Deposite";
@@ -27,7 +26,6 @@ export const HomeWrapper = () => {
         <div className="m-4 w-full">
           <Routes>
             <Route path="" element={pendingTransfer ? <Invest /> : <Main />} />
-            <Route path="recharge" element={<Recharge />} />
             <Route path="deposite" element={<Deposite />} />
             <Route path="invest" element={<Invest />} />
             <Route path="transfer" element={<Transfer />} />

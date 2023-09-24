@@ -8,16 +8,13 @@ import { GlobalContext } from "../../App";
 
 export const HomeNavbar = (props) => {
   const { setOpen, setShowSidebar } = props;
-  const { balance, setBalance, prices } = useContext(GlobalContext);
+  const { balance, setBalance, prices, btcRate } = useContext(GlobalContext);
   const [showProfile, setShowProfile] = useState(false);
   const [userInfo, setUserInfo] = useState({
     username: "",
     balance: 0.0,
   });
   const navigate = useNavigate();
-
-  let to_fixed = balance.toString().length > 6 ? 4 : 6;
-  if (balance === 0) to_fixed = 0;
 
   useEffect(() => {
     let info = JSON.parse(localStorage.getItem("usr_info"));
@@ -34,6 +31,28 @@ export const HomeNavbar = (props) => {
     };
     check_balance();
   }, []);
+
+  const toggleTheme = () => {
+    if (localStorage.getItem("color-theme")) {
+      if (localStorage.getItem("color-theme") === "light") {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("color-theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("color-theme", "light");
+      }
+
+      // if NOT set via local storage previously
+    } else {
+      if (document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("color-theme", "light");
+      } else {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("color-theme", "dark");
+      }
+    }
+  };
 
   useEffect(() => {
     var themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
@@ -176,7 +195,7 @@ export const HomeNavbar = (props) => {
                 >
                   Balance:{" "}
                   {`₿${balance.toLocaleString()} ($${(
-                    balance * prices.btc
+                    balance * btcRate
                   ).toFixed(2)})`}
                 </span>
               </li>
@@ -196,18 +215,12 @@ export const HomeNavbar = (props) => {
                 </span>
               </li>
               <li className="flex items-center px-4">
-                <span class="block  py-2 font-bold mr-2 dark:hover:bg-gray-600 dark:hover:text-white">
-                  Night mode
-                </span>
-                <svg
-                  id="theme-toggle-dark-icon"
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
+                <button
+                  onClick={() => toggleTheme()}
+                  className="flex items-center inline"
                 >
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                </svg>
+                  <span className="block py-2 font-bold mr-2 ">Day mode</span>
+                </button>
               </li>
             </ul>
 

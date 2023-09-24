@@ -8,7 +8,7 @@ import { GlobalContext } from "../../App";
 import ReCAPTCHA from "react-google-recaptcha";
 
 export const Login = () => {
-  const { setPendingTransfer, setPendingTransferInfo, setToast } =
+  const { setPendingTransfer, setPendingTransferInfo, setToast, setUserRole } =
     useContext(GlobalContext);
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState({
@@ -31,8 +31,8 @@ export const Login = () => {
       .post(`${AppSettings.APIserver}/login`, userData)
       .then((res) => {
         if (res.status === 200) {
+          setUserRole(res.data.user_role);
           const { username, id, token, account_type } = res.data;
-
           let user_info = {
             username,
             id,

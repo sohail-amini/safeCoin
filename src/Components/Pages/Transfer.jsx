@@ -6,7 +6,7 @@ import { GlobalContext } from "../../App";
 import toast from "react-hot-toast";
 
 export const Transfer = () => {
-  const { pendingTransfer, prices, balance, setBalance } =
+  const { pendingTransfer, btcRate, balance, setBalance } =
     useContext(GlobalContext);
   let info = JSON.parse(localStorage.getItem("usr_info"));
   const [transferInfo, setTransferInfo] = useState({
@@ -84,7 +84,7 @@ export const Transfer = () => {
         await axios
           .post(`${AppSettings.APIserver}/transfer`, {
             ...transferInfo,
-            amount: transferInfo.amount / prices.btc,
+            amount: transferInfo.amount / btcRate,
             senderId: info.id,
           })
           .then((res) => {
@@ -127,11 +127,11 @@ export const Transfer = () => {
           onSubmit={createTransfer}
         >
           <div
-            class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-900 dark:text-red-400 dark:border-red-800"
+            className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-900 dark:text-red-400 dark:border-red-800"
             role="alert"
           >
             <svg
-              class="flex-shrink-0 inline w-4 h-4 mr-3"
+              className="flex-shrink-0 inline w-4 h-4 mr-3"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
@@ -139,26 +139,26 @@ export const Transfer = () => {
             >
               <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
-            <span class="sr-only">Info</span>
+            <span className="sr-only">Info</span>
             <div>
-              <span class="font-medium">
+              <span className="font-medium">
                 You can only transfer to other users of the site!
               </span>
             </div>
           </div>
           <div
-            class="p-4 mb-4 text-green-800 rounded-lg bg-green-100 dark:bg-gray-900 dark:text-green-400"
+            className="p-4 mb-4 text-green-800 rounded-lg bg-green-100 dark:bg-gray-900 dark:text-green-400"
             role="alert"
           >
-            <span class="font-base"> Balance:</span> ₿{""}
+            <span className="font-base"> Balance:</span> ₿{""}
             {balance.toLocaleString()}
             {""}
-            <b className="ml-1">{`($${(balance * prices.btc).toFixed(2)})`} </b>
+            <b className="ml-1">{`($${(balance * btcRate).toFixed(2)})`} </b>
           </div>
 
           {balance === 0 && (
             <div
-              class="p-4 mb-4 text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-green-400"
+              className="p-4 mb-4 text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-green-400"
               role="alert"
             >
               <b className="ml-2">
@@ -167,10 +167,10 @@ export const Transfer = () => {
             </div>
           )}
 
-          <div class="mb-6">
+          <div className="mb-6">
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Receiver username
             </label>
@@ -183,22 +183,22 @@ export const Transfer = () => {
               }}
               type="text"
               id="password"
-              class={`${
+              className={`${
                 isUserNotFound && "border border-red-500"
               } shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light`}
               required
               placeholder="Enter username"
             />
             {isUserNotFound && (
-              <p class="mt-2 text-sm text-red-600 dark:text-red-500">
-                <span class="font-medium">Oops!</span> User not found
+              <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                <span className="font-medium">Oops!</span> User not found
               </p>
             )}
           </div>
-          <div class="mb-6">
+          <div className="mb-6">
             <label
               for="amount"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Transfer Amount
             </label>
@@ -211,7 +211,7 @@ export const Transfer = () => {
               max={1000}
               type="number"
               id="amount"
-              class={` shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light`}
+              className={` shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light`}
               required
               placeholder="$1,000  Maximum Per Transfer"
             />
@@ -220,7 +220,7 @@ export const Transfer = () => {
           <button
             disabled={loader || pendingTransfer || balance === 0}
             type="submit"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             {loader ? (
               <span>
@@ -228,7 +228,7 @@ export const Transfer = () => {
                 <svg
                   aria-hidden="true"
                   role="status"
-                  class="inline mr-2 w-5 h-5  text-gray-200 animate-spin dark:text-gray-600"
+                  className="inline mr-2 w-5 h-5  text-gray-200 animate-spin dark:text-gray-600"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -270,27 +270,27 @@ export const Transfer = () => {
                   <th scope="col" className="px-6 py-3 sm:px-1">
                     Status
                   </th>
-                  <th scope="col" class="px-6 py-3 sm:px-1">
+                  <th scope="col" className="px-6 py-3 sm:px-1">
                     Date
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {transfers.map((transfer) => (
-                  <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 dark:text-slate-200">
+                  <tr className="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 dark:text-slate-200">
                     <th
                       scope="row"
-                      class="px-6 py-4 sm:px-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="px-6 py-4 sm:px-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       {transfer.receiver}
                     </th>
-                    <td class="px-6 py-4 sm:px-1">
-                      ${(transfer.amount * prices.btc).toFixed(2)}
+                    <td className="px-6 py-4 sm:px-1">
+                      ${(transfer.amount * btcRate).toFixed(2)}
                     </td>
-                    <td class="px-6 py-4 sm:px-1">
+                    <td className="px-6 py-4 sm:px-1">
                       {info.username === "admin" ? "Success" : transfer.status}
                     </td>
-                    <td class="px-6 py-4 sm:px-1">{transfer.datetime}</td>
+                    <td className="px-6 py-4 sm:px-1">{transfer.datetime}</td>
                   </tr>
                 ))}
               </tbody>

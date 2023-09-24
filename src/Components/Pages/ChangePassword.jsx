@@ -52,7 +52,7 @@ export function ChangePassword() {
 
   return (
     <div className="fixed bg-themask flex justify-center items-center top-0 left-0 right-0 bottom-0 z-50 w-full ">
-      <div className="w-2/5 bg-white p-6 rounded dark:bg-gray-600">
+      <div className="w-2/5 sm:w-full sm:mx-4 bg-white p-6 rounded dark:bg-gray-600">
         <div className="flex justify-between">
           <h2 className="font-bold text-xl dark:text-slate-100">
             Change Password
@@ -60,11 +60,11 @@ export function ChangePassword() {
           <button
             onClick={() => handleOpen(!open)}
             type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide="defaultModal"
           >
             <svg
-              class="w-3 h-3"
+              className="w-3 h-3"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -78,7 +78,7 @@ export function ChangePassword() {
                 d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
               />
             </svg>
-            <span class="sr-only">Close modal</span>
+            <span className="sr-only">Close modal</span>
           </button>
         </div>
 
@@ -86,7 +86,7 @@ export function ChangePassword() {
           <div className="my-2">
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Current password
             </label>
@@ -111,7 +111,7 @@ export function ChangePassword() {
           <div className="my-2">
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               New password
             </label>
@@ -134,7 +134,7 @@ export function ChangePassword() {
           <div className="my-2">
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-slate-100"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-slate-100"
             >
               Confirm password
             </label>
@@ -173,7 +173,7 @@ export function ChangePassword() {
           <button
             onClick={() => handleOpen(!open)}
             type="button"
-            class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
           >
             Close
           </button>

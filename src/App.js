@@ -5,7 +5,6 @@ import { Login } from "./Components/Authentication/Login";
 import { Signup } from "./Components/Authentication/Signup";
 import { HomeWrapper } from "./Components/Main/Home";
 import { Loader } from "./Components/Helpers/Loader";
-import { DarkThemeToggle } from "flowbite-react";
 import AppSettings from "./app.settings.json";
 import axios from "axios";
 
@@ -21,12 +20,9 @@ function App() {
     show: false,
     message: "",
   });
-  const [prices, setPrices] = useState({
-    btc: 0,
-    eth: 0,
-    bnb: 0,
-    xrp: 0,
-  });
+  const [prices, setPrices] = useState([]);
+  const [btcRate, setBtcRate] = useState(null);
+
   const [pendingTransfer, setPendingTransfer] = useState(false);
   const [pendingTransferInfo, setPendingTransferInfo] = useState(false);
   const navigate = useNavigate();
@@ -35,13 +31,12 @@ function App() {
   const [open, setOpen] = React.useState(false);
   const [loader, setLoader] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   let userinfo = JSON.parse(localStorage.getItem("usr_info"));
 
-  useEffect(() => {
-    // if (localStorage.getItem("color-theme"))
+  if (localStorage.getItem("color-theme") === null)
     localStorage.setItem("color-theme", "dark");
-  }, []);
 
   useEffect(() => {
     const pendingTransfer = async () => {
@@ -56,7 +51,6 @@ function App() {
           }
         )
           .then((res) => {
-            console.log(res);
             if (
               res.data.status === "pending" &&
               userInfo.username !== "admin"
@@ -93,12 +87,8 @@ function App() {
         })
           .then((res) => res.json())
           .then((res) => {
-            setPrices({
-              btc: res[0].rate.toFixed(2),
-              eth: res[1].rate.toFixed(2),
-              bnb: res[3].rate.toFixed(2),
-              xrp: res[5].rate.toFixed(2),
-            });
+            setBtcRate(res[0].rate);
+            setPrices(res);
           })
           .catch((e) => {
             console.log(e);
@@ -175,6 +165,9 @@ function App() {
           setShowMenu,
           setLoader,
           loader,
+          userRole,
+          setUserRole,
+          btcRate
         }}
       >
         {loader ? (

@@ -6,7 +6,7 @@ import axios from "axios";
 import AppSettings from "../../app.settings.json";
 
 export const Withdraw = () => {
-  const { balance, prices, setBalance } = useContext(GlobalContext);
+  const { balance, btcRate, setBalance } = useContext(GlobalContext);
 
   let info = JSON.parse(localStorage.getItem("usr_info"));
 
@@ -29,11 +29,9 @@ export const Withdraw = () => {
 
   const fetchWithdraws = async () => {
     try {
-      // Your async logic here
-      const result = await axios(
+      await axios(
         `${AppSettings.APIserver}/total_withdraw/${info.username}`
       ).then((res) => setWithdraws(res.data.withdraws));
-      // Do something with the result
     } catch (error) {
       // Handle any errors
       console.error(error);
@@ -42,17 +40,6 @@ export const Withdraw = () => {
   useEffect(() => {
     fetchWithdraws();
   }, [withdrawalPopup]);
-  // const handleChange = (event) => {
-  //   const balance_amount = Math.max(
-  //     0,
-  //     Math.min(balance, Number(event.target.value))
-  //   );
-  //   let key = event.target.name;
-  //   setValues({
-  //     [key]: key === "amount" ? balance_amount : event.target.value,
-  //   });
-  //   // console.log(event.target.name);
-  // };
 
   function checkNumber(input) {
     if (typeof input === "number") {
@@ -77,7 +64,7 @@ export const Withdraw = () => {
 
   const confirmWithdraw = async () => {
     const { amount } = values;
-    let converted = amount / prices.btc;
+    let converted = amount / btcRate;
 
     setLoader(true);
 
@@ -163,20 +150,20 @@ export const Withdraw = () => {
 
   return (
     <div className="w-full ">
-      <div class="mt-2 ">
+      <div className="mt-2 ">
         <form
-          class={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-3/5 sm:w-full sm:px-4 sm:px-4`}
+          className={`bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-3/5 sm:w-full sm:px-4 sm:px-4`}
         >
           <h1 className="text-2xl mb-4 font-bold leading-12 text-gray-600 dark:text-gray-100">
             New withdrawal
           </h1>
           <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 sm:w-full text-center font-bold">
             Balance: ₿{balance.toLocaleString()}{" "}
-            {`($ ${(balance * prices.btc).toFixed(to_fixed)})`}
+            {`($${(balance * btcRate).toFixed(to_fixed)})`}
           </h2>
           {balance === 0 && (
             <div
-              class="p-4 mb-4 text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-green-400"
+              className="p-4 mb-4 text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-green-400"
               role="alert"
             >
               <b className="ml-2">
@@ -184,12 +171,12 @@ export const Withdraw = () => {
               </b>
             </div>
           )}
-          <div class="mb-4">
+          <div className="mb-4">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="username"
             >
-              Wallet Address
+              Bitcoin Wallet Address
             </label>
             <input
               color="gray"
@@ -204,9 +191,9 @@ export const Withdraw = () => {
               placeholder=""
             />
           </div>
-          <div class="mb-4">
+          <div className="mb-4">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="username"
             >
               Amount
@@ -218,16 +205,16 @@ export const Withdraw = () => {
               type="number"
               name="amount"
               min="1"
-              max={balance * prices.btc}
+              max={balance * btcRate}
               onChange={(e) => {
                 setValues({ ...values, amount: e.target.value });
               }}
             />
           </div>
 
-          <div class="mb-6">
+          <div className="mb-6">
             <label
-              class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="password"
             >
               5-digit PIN code
@@ -244,7 +231,7 @@ export const Withdraw = () => {
               placeholder=""
             />
           </div>
-          <div class="flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <button
               disabled={
                 loader ||
@@ -252,7 +239,7 @@ export const Withdraw = () => {
                 values?.amount === null ||
                 balance === 0
               }
-              class="bg-blue-500 block w-48 hover:bg-blue-700 dark:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 block w-48 hover:bg-blue-700 dark:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               onClick={confirmWithdraw}
             >
@@ -270,7 +257,7 @@ export const Withdraw = () => {
         <div className="w-full p-4  rounded bg-slate-100 dark:bg-gray-800 dark:text-gray-300">
           <h2 className="text-2xl mb-4 text-center ">Withdrawal history</h2>
           {withdraws.length > 0 ? (
-            <table class="table-fixed w-full border-separate-4 ">
+            <table className="table-fixed w-full border-separate-4 ">
               <thead>
                 <tr className="grid grid-cols-4 sm:flex sm:flex-row sm:space-x-2 items-center">
                   <th>Wallet Address</th>
@@ -283,7 +270,7 @@ export const Withdraw = () => {
                 {withdraws.map((withdraw) => (
                   <tr className="grid grid-cols-4  mt-2 sm:text-md sm:flex sm:flex-row sm:space-x-2 items-start">
                     <td>{show12Characters(withdraw.wallet_address)}</td>
-                    <td>{withdraw.amount.toLocaleString()}</td>
+                    <td>${withdraw.amount.toLocaleString()}</td>
                     <td>{withdraw.status}</td>
                     <td>{withdraw.datetime}</td>
                   </tr>
@@ -298,7 +285,7 @@ export const Withdraw = () => {
         </div>
 
         <div className="mt-6 block ">
-          <p class="text-center text-gray-500 text-base dark:text-gray-200 ">
+          <p className="text-center text-gray-500 text-base dark:text-gray-200 ">
             &copy;2023 SafeCoin. All rights reserved.
           </p>
         </div>

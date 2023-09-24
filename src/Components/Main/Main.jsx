@@ -1,12 +1,12 @@
 import React from "react";
 import { BsCurrencyBitcoin } from "react-icons/bs";
 import { FaEthereum } from "react-icons/fa";
-import { BanknotesIcon } from "@heroicons/react/24/solid";
 import { GiWallet } from "react-icons/gi";
 import { AiOutlineTransaction } from "react-icons/ai";
 import { GiReceiveMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { InsideNav } from "./InsideNav";
+import { HiOutlineCalculator } from "react-icons/hi";
 import usdt from "../../assets/usdt.png";
 import bnb from "../../assets/bnb.png";
 import ada from "../../assets/ada.png";
@@ -52,42 +52,42 @@ export const Main = () => {
 
       <div className="mt-4 grid grid-cols-3 gap-x-2 md:grid-cols-2 sm:grid-cols-2 gap-y-2">
         <span
-          onClick={() => navigate("/home/recharge")}
-          className="flex md:flex-col sm:flex-col sm:items-center  items-cener block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700  "
+          onClick={() => navigate("/home/calculator")}
+          className="cursor-pointer flex md:flex-col sm:flex-col sm:items-center  items-cener block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700  "
         >
-          <BanknotesIcon className="text-blue-500 h-12 w-12" />
+          <HiOutlineCalculator className="text-blue-500 h-12 w-12" />
           <h5 className="mb-2 flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Recharge
+            Calculator
           </h5>
           {/* <p className="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
         </span>
         <span
           onClick={() => navigate("/home/withdraw")}
           href="#"
-          className="flex md:flex-col sm:flex-col sm:items-center items-cener block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700  "
+          className="cursor-pointer flex md:flex-col sm:flex-col sm:items-center items-cener block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700  "
         >
           <GiWallet className="dark:text-cyan-100 text-black h-12 w-12" />
           <h5 className="mb-2 flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Withdraw
           </h5>
-          {/* <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
+          {/* <p className="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
         </span>
         <span
           onClick={() => navigate("/home/transfer")}
           href="#"
-          className="flex md:flex-col sm:flex-col sm:items-center items-cener block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700  "
+          className="cursor-pointer flex md:flex-col sm:flex-col sm:items-center items-cener block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700  "
         >
           <AiOutlineTransaction className="text-indigo-400 h-12 w-12" />
           <h5 className="mb-2 flex items-center  text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Transfer
           </h5>
-          {/* <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
+          {/* <p className="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
         </span>
 
         <span
           onClick={() => navigate("/home/invest")}
           href="#"
-          className="flex items-cener sm:flex-col sm:items-center block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 "
+          className="cursor-pointer flex items-cener sm:flex-col sm:items-center block space-x-3 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 "
         >
           <GiReceiveMoney className="text-pink-500 h-12 w-12" />
           <h5 className="mb-2 flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
