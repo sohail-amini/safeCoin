@@ -17,16 +17,4 @@ def create_bitcoin_payment():
         "callback": "https://chat.openai.com/"
     }
     response = requests.post(url, headers=headers, json=data)
-    return "Hello"
-# def create_bitcoin_payment(api_key, amount, callback_url):
-
-
-#     response = requests.post(url, headers=headers, json=data)
-#     if response.status_code == 200:
-#         payment_data = response.json()
-#         payment_address = payment_data["address"]
-#         payment_uuid = payment_data["uuid"]
-#         return payment_address, payment_uuid
-#     else:
-#         print(f"Failed to create Bitcoin payment. Error: {response.text}")
-#         return None, None
+    return "Payment created successfully"

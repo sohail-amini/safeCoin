@@ -21,6 +21,7 @@ class Invoice(db.Model):
     btcvalue = db.Column(db.Integer, nullable=True)
     received = db.Column(db.Integer, nullable=True)
     txid = db.Column(db.String(250), nullable=True)
+    user_info = db.Column(db.String(1000), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     STATUS_CHOICES = (
@@ -59,21 +60,20 @@ def track_invoice(pk):
     return jsonify(data)
 
 
-@invoice_bp.route("/create_payment/<int:pk>")
+@invoice_bp.route("/create_payment/<int:pk>", methods=["POST"])
 def create_payment(pk):
     product = Product.query.get(pk)
+    j_data = request.get_json()
     url = 'https://www.blockonomics.co/api/new_address'
-    headers = {'Authorization': "Bearer " +
-               "zpMND5ZBSM5vJ84UmLvGlNU0UlYZQytiQR9dGvE0K20"}
+    headers = {'Authorization': "Bearer " + os.getenv("BLOCKNOMICS_TOKEN")}
     r = requests.post(url, headers=headers)
-    
+    user_info_str = json.dumps(j_data['userInfo'])
     if r.status_code == 200:
         address = r.json()['address']
         bits = exchange_rate(product.price)
-        print("btcvalue=:", bits*1e8)
         order_id = str(uuid.uuid1())
         invoice = Invoice(order_id=order_id, address=address,
-                          btcvalue=bits*1e8, status=-1)
+                          btcvalue=bits*1e8, status="Pending", user_info=user_info_str)
         product.invoices.append(invoice)
         db.session.add(invoice)
         db.session.commit()
@@ -102,3 +102,17 @@ def receive_payment():
     invoice.txid = txid
     db.session.commit()
     return jsonify({"message": "Payment received."})
+
+
+@invoice_bp.route("/add_orders", methods=["GET"])
+def add_orders():
+    # Create two Order instances with the specified columns
+    order1 = Invoice(product_id=1, status="pending", order_id="order123", address="address1", btcvalue=0.1, received=0.0, txid="txid123")
+    order2 = Invoice(product_id=2, status="pending", order_id="order456", address="address2", btcvalue=0.2, received=0.0, txid="txid456")
+
+    # Add the orders to the database
+    db.session.add(order1)
+    db.session.add(order2)
+    db.session.commit()
+
+    return jsonify({"message": "Two orders added to the database."})
