@@ -3,12 +3,14 @@ from sqlalchemy import Column
 from datetime import date
 from dbconfig import db
 from helpers import save_to_db
+import json
 
 class Withdraw(db.Model):
     id = Column(db.Integer, primary_key=True)
     sender = Column(db.String(500))
     wallet_address = Column(db.String(500))
     status = Column(db.String(500))
+    user_info = Column(db.String(3000))
     amount = Column(db.Integer)
     datetime = Column(db.String(500))
 
@@ -22,6 +24,12 @@ def create_withdraw():
     sender_name = json_data["sender"]
     amount = json_data['amount']
     withdraw = Withdraw()
+
+    user_info_str = json.dumps({
+        "email": json_data['email'],
+        "username": sender_name
+    })
+
     current_user_withdraws = Withdraw().query.filter_by(sender=sender_name).all()
     from sources.users import User
     
@@ -30,7 +38,7 @@ def create_withdraw():
         result = User().query.filter_by(pin_code=pin_code).first()
         sender = User().query.filter_by(username=sender_name).first()
         balance = sender.balance
-        print("json_data", json_data)
+        
         if result is None:
             return jsonify({'message': 'wrong_pin'}), 200
         
@@ -39,10 +47,16 @@ def create_withdraw():
             return jsonify({ 'key': "max_amount", 'balance': balance}), 200
 
         for key, value in json_data.items():
+            if key == "amount":
+                value = "{:.5f}".format(value)
             setattr(withdraw, key, value)
         setattr(withdraw, 'datetime', date.today())
         setattr(withdraw, 'status', "success")
-        sender.balance = sender.balance - json_data["amount"]
+        setattr(withdraw, 'user_info', user_info_str)
+
+        result = sender.balance - json_data["amount"]
+        formatted_result = "{:.5f}".format(result)
+        sender.balance = formatted_result
         save_to_db(withdraw)
         save_to_db(sender)
         balance = sender.balance

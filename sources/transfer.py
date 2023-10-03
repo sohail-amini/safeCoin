@@ -28,13 +28,13 @@ transfer_bp = Blueprint("transfer", __name__)
 def search_transfer(user_id):
     try:
         pending_transfers = Transfer.query.filter_by(
-            receiver=user_id, status='pending').order_by(Transfer.id.desc()).first()
+            id=user_id, status='pending').order_by(Transfer.id.desc()).first()
         if pending_transfers is None:
             return jsonify({'message': 'no pending transaction'}), 200
 
         # Create a transfer object with the desired information
         transfer_object = {
-            'receiver': user_id,
+            'receiver': pending_transfers.receiver,
             'sender': pending_transfers.sender,
             'amount': pending_transfers.amount,
             'status': pending_transfers.status
