@@ -43,7 +43,7 @@ function App() {
       if (localStorage.getItem("usr_info")) {
         const userInfo = JSON.parse(localStorage.getItem("usr_info"));
         await axios(
-          `${AppSettings.APIserver}/latest_pending_transfer/${userInfo.username}`,
+          `${AppSettings.APIserver}/latest_pending_transfer/${userInfo.id}`,
           {
             headers: {
               Authorization: `Bearer ${userInfo.token}`,
@@ -131,6 +131,12 @@ function App() {
         console.log(e);
       }
     };
+
+    const isUserLoggedIn = () => {
+      if (localStorage.getItem("usr_info") === null) navigate("/login");
+    };
+
+    isUserLoggedIn();
     navigate_login();
   }, []);
 
@@ -167,7 +173,7 @@ function App() {
           loader,
           userRole,
           setUserRole,
-          btcRate
+          btcRate,
         }}
       >
         {loader ? (

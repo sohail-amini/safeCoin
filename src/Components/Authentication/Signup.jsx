@@ -65,6 +65,7 @@ export const Signup = () => {
               id,
               token,
               account_type,
+              email: userData.email,
             };
             sendWelcomeMessage();
             localStorage.setItem("usr_info", JSON.stringify(user_info));

@@ -9,14 +9,29 @@ export const Deposite = () => {
   const location = useLocation();
   const [depositeInfo, setDepositeInfo] = useState({});
   const { userinfo } = useContext(GlobalContext);
-  const [loader, setLoader] = useState(false);
+
   const [error, setError] = useState(false);
-  const createInvoice = async (pk) => {
-    await axios(`${AppSettings.APIserver}/create_payment/${pk}`)
+
+  const getIP = async (id, price) => {
+    await fetch(`https://api.ipify.org?format=json`)
+      .then((res) => res.json())
+      .then((res) => {
+        createInvoice(id, price, res.ip);
+      });
+  };
+
+  const createInvoice = async (pk, price, ip) => {
+    const userInfo = {
+      ip: ip,
+      user_agent: navigator.userAgent,
+      email: userinfo.email,
+    };
+    console.log("userInfo", userInfo);
+    await axios
+      .post(`${AppSettings.APIserver}/create_payment/${pk}`, { userInfo })
       .then((res) => {
         if (res.data.error) setError(true);
         setDepositeInfo(res.data);
-        setLoader(false);
       })
       .catch(() => {
         setError(true);
@@ -24,9 +39,8 @@ export const Deposite = () => {
   };
 
   useEffect(() => {
-    setLoader(true);
     if (location.state.last_route === "invest") {
-      createInvoice(location.state.productId);
+      getIP(location.state.productId, location.state.productPrice);
     }
   }, []);
 
@@ -50,19 +64,19 @@ export const Deposite = () => {
                 role="alert"
               >
                 <span className="font-medium mb-4 text-gray-600 dark:text-slate-300">
-                  Send 0.005 btc to this address:
+                  Send {location.state.productPrice} btc to this address:
                 </span>{" "}
                 <b className="block mt-4 sm:inline">{depositeInfo.address}</b>
               </div>
             )}
             <div className="mt-3">
               <span>Or scan this QR code</span>
-              <a className="inline" href="#home">
-                <img
-                  alt="safecoin"
-                  src={`https://www.bitcoinqrcodemaker.com/api/?style=bitcoin&address=${depositeInfo.address}&amount=30&color=1`}
-                />
-              </a>
+
+              <img
+                className=""
+                alt="safecoin"
+                src={`https://www.bitcoinqrcodemaker.com/api/?style=bitcoin&address=${depositeInfo.address}&amount=30&color=1`}
+              />
             </div>
           </div>
         </div>

@@ -75,7 +75,6 @@ export const Invest = (props) => {
       .catch(() => console.log("Something went wrong!"));
   };
   const createPackage = async () => {
-    console.log(selectedProduct);
     await axios
       .post(`${AppSettings.APIserver}/products`, selectedProduct)
       .then((response) => {
@@ -246,6 +245,7 @@ export const Invest = (props) => {
                         state: {
                           last_route: "invest",
                           productId: pck.id,
+                          productPrice: pck.price,
                         },
                       })
                     }

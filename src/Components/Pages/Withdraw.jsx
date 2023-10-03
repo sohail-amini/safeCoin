@@ -64,7 +64,7 @@ export const Withdraw = () => {
 
   const confirmWithdraw = async () => {
     const { amount } = values;
-    let converted = amount / btcRate;
+    let converted = +(amount / btcRate);
 
     setLoader(true);
 
@@ -97,6 +97,8 @@ export const Withdraw = () => {
         .post(`${AppSettings.APIserver}/create_withdraw`, {
           ...values,
           sender: info.username,
+          email: info.email,
+          amount: converted,
         })
         .then((res) => {
           console.log(res);

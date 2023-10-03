@@ -208,6 +208,7 @@ export const Transfer = () => {
               onChange={(e) => {
                 setTransferInfo({ ...transferInfo, amount: e.target.value });
               }}
+              // Change max transfer from here
               max={1000}
               type="number"
               id="amount"

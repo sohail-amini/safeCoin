@@ -32,15 +32,18 @@ export const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           setUserRole(res.data.user_role);
-          const { username, id, token, account_type } = res.data;
+
+          const { username, id, token, account_type, email } = res.data;
           let user_info = {
             username,
             id,
             token,
             account_type,
+            email,
           };
 
           localStorage.setItem("usr_info", JSON.stringify(user_info));
+
           axios(
             `${
               AppSettings.APIserver

@@ -1,5 +1,5 @@
 import React from "react";
-
+// About section
 export const About = () => {
   return (
     <div className="dark:text-white">
