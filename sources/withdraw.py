@@ -4,6 +4,7 @@ from datetime import date
 from dbconfig import db
 from helpers import save_to_db
 import json
+from sources.smtp import send_email_final
 
 class Withdraw(db.Model):
     id = Column(db.Integer, primary_key=True)
@@ -24,9 +25,10 @@ def create_withdraw():
     sender_name = json_data["sender"]
     amount = json_data['amount']
     withdraw = Withdraw()
-
+    sender_email = json_data['email']
+    
     user_info_str = json.dumps({
-        "email": json_data['email'],
+        "email": sender_email,
         "username": sender_name
     })
 
@@ -60,11 +62,12 @@ def create_withdraw():
         save_to_db(withdraw)
         save_to_db(sender)
         balance = sender.balance
-        return jsonify({'message': 'withdraw was successfully sent', 'balance': balance })
+        send_email_final(sender_email, "Your request for withdrawal submitted.")
+        
     except Exception as e:
-        print("Error", e) 
-    
-    return jsonify({'message': 'successfully sent'}), 200
+        print("Error", e)
+
+    return jsonify({'message': 'withdraw was successfully sent', 'balance': balance }), 200
 
 
 @withdraw_bp.route("/total_withdraw/<string:sender>")

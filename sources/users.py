@@ -94,7 +94,7 @@ def create_user():
         pin_code=json['pin_code'],
         user_role= "basic",
         balance=0,
-        account_type="Bronze"
+        account_type="Free Trial"
     )
 
     save_to_db(user)
@@ -181,12 +181,3 @@ def change_password(user_id):
         return {
             "is_same_pass": False
         }
-
-    # generate_password_hash =
-    # isSamePassword = bcrypt.hashpw(, result.password)
-
-    # print("result", result.password)
-    # return {
-    #     "isSm"
-    #     "password": result.password
-    # };

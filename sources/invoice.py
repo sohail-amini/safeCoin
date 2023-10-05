@@ -6,6 +6,7 @@ import requests
 import uuid
 import os
 from sources.products import Product
+from helpers import save_to_db
 
 invoice_bp = Blueprint("invoice", __name__)
 
@@ -73,7 +74,7 @@ def create_payment(pk):
         bits = exchange_rate(product.price)
         order_id = str(uuid.uuid1())
         invoice = Invoice(order_id=order_id, address=address,
-                          btcvalue=bits*1e8, status="Pending", user_info=user_info_str)
+                          btcvalue=bits*1e8, status="Pending", user_info=user_info_str, received=0)
         product.invoices.append(invoice)
         db.session.add(invoice)
         db.session.commit()
@@ -88,20 +89,39 @@ def create_payment(pk):
 
 @invoice_bp.route("/receive_payment", methods=["GET"])
 def receive_payment():
-    data = request.get_json()
-    txid = data.get('txid')
-    value = data.get('value')
-    status = data.get('status')
-    addr = data.get('addr')
 
-    invoice = Invoice.query.filter_by(address=addr).first()
+    address = request.args.get('addr')
+    status = request.args.get('status')
+    value = request.args.get('value')
+    txid = request.args.get('txid')
+    
+    invoice = Invoice.query.filter_by(address=address).first()
 
     invoice.status = int(status)
-    if int(status) == 2:
+
+    if (int(status) == 2):
         invoice.received = value
+
     invoice.txid = txid
-    db.session.commit()
-    return jsonify({"message": "Payment received."})
+    save_to_db(invoice)
+
+    return jsonify({"message": "Payment received.", "address": address, "Status": status})
+
+
+    # data = request.get_json()
+    # txid = data.get('txid')
+    # value = data.get('value')
+    # status = data.get('status')
+    # addr = data.get('addr')
+
+    # invoice = Invoice.query.filter_by(address=addr).first()
+
+    # invoice.status = int(status)
+    # if int(status) == 2:
+    #     invoice.received = value
+    # invoice.txid = txid
+    # db.session.commit()
+    # return jsonify({"message": "Payment received."})
 
 
 @invoice_bp.route("/add_orders", methods=["GET"])
