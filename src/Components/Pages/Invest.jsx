@@ -217,6 +217,9 @@ export const Invest = (props) => {
                   <h5 className="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                     {pck.title}
                   </h5>
+                  <b className="dark:text-slate-200 mb-2 block">
+                    Price: {pck.price} BTC
+                  </b>
                   <span
                     className={`my-2 ${labelBgColor}  text-blue-800 text-sm font-medium mr-2 py-2 px-4 rounded dark:bg-blue-900 dark:text-blue-300`}
                   >
@@ -233,7 +236,6 @@ export const Invest = (props) => {
                       Max invest: <b> {pck.max_invest}</b>
                     </li>
                     <li>Instant Withdraw</li>
-                    <li>Price: {pck.price}</li>
                     <li>
                       Referral Commission: <b>{pck.commision}</b>
                     </li>

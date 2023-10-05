@@ -8,6 +8,10 @@ import AppSettings from "../../app.settings.json";
 export const Withdraw = () => {
   const { balance, btcRate, setBalance } = useContext(GlobalContext);
 
+  useEffect(() => {
+    console.log("Balance", balance);
+  }, [balance]);
+
   let info = JSON.parse(localStorage.getItem("usr_info"));
 
   const [values, setValues] = useState({

@@ -96,7 +96,7 @@ function App() {
       } catch (error) {
         console.error("Error occurred during API request:", error);
       }
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   };
 

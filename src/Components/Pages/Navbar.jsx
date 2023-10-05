@@ -25,6 +25,7 @@ export const HomeNavbar = (props) => {
       await fetch(`${AppSettings.APIserver}/check_balance/${info.id}`)
         .then((res) => res.json())
         .then((res) => {
+          console.log("Response", res);
           setBalance(res.balance);
           setUserInfo({
             username: info.username,

@@ -8,7 +8,8 @@ import { GlobalContext } from "../../App";
 export const Deposite = () => {
   const location = useLocation();
   const [depositeInfo, setDepositeInfo] = useState({});
-  const { userinfo } = useContext(GlobalContext);
+  const { loader, userinfo, setLoader } = useContext(GlobalContext);
+  const [status, setStatus] = useState("Confirmed");
 
   const [error, setError] = useState(false);
 
@@ -26,7 +27,6 @@ export const Deposite = () => {
       user_agent: navigator.userAgent,
       email: userinfo.email,
     };
-    console.log("userInfo", userInfo);
     await axios
       .post(`${AppSettings.APIserver}/create_payment/${pk}`, { userInfo })
       .then((res) => {
@@ -63,15 +63,36 @@ export const Deposite = () => {
                 className="text-xl sm:text-[15px] sm:mt-4 p-4 text-gray-800 sm:w-11/12 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
                 role="alert"
               >
-                <span className="font-medium mb-4 text-gray-600 dark:text-slate-300">
-                  Send {location.state.productPrice} btc to this address:
-                </span>{" "}
-                <b className="block mt-4 sm:inline">{depositeInfo.address}</b>
+                <div>
+                  <span className="font-medium mb-4 text-gray-600 dark:text-slate-300">
+                    Send {location.state.productPrice} btc to this address:
+                  </span>{" "}
+                  <b className="block mt-4 sm:inline">{depositeInfo.address}</b>
+                </div>
+                <div className="mt-6 flex flex-col">
+                  <span>
+                    Payment Status:{" "}
+                    <b
+                      className={`${
+                        status === "Pending"
+                          ? "text-yellow-500 dark:text-yellow-300"
+                          : status === "Confirmed"
+                          ? "text-green-500 dark:text-green-200"
+                          : "text-gray-500"
+                      } `}
+                    >
+                      {" "}
+                      {status}
+                    </b>
+                  </span>
+                  <span>
+                    Amount: <b>{location.state.productPrice} BTC</b>{" "}
+                  </span>
+                </div>
               </div>
             )}
             <div className="mt-3">
               <span>Or scan this QR code</span>
-
               <img
                 className=""
                 alt="safecoin"
