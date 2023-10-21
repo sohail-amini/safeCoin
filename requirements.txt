@@ -1,8 +1,9 @@
-Flask==2.2.3
+Flask==2.2.0
 python-dotenv
-SQLAlchemy==2.0.9
+Flask-SQLAlchemy==3.0.2
 requests
 bcrypt
 flask_sqlalchemy
 flask_jwt_extended
 flask_cors
+Werkzeug==2.2.2
