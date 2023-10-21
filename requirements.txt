@@ -3,7 +3,6 @@ python-dotenv
 Flask-SQLAlchemy==3.0.2
 requests
 bcrypt
-flask_sqlalchemy
 flask_jwt_extended
 flask_cors
 Werkzeug==2.2.2
