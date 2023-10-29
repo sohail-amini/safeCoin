@@ -123,7 +123,6 @@ def check_balance(user_id):
 def login():
     json = request.get_json()
     user = User.query.filter_by(username=json["username"]).first()
-    email = json["username"]
     password = json["password"]
 
     if user:
@@ -181,3 +180,24 @@ def change_password(user_id):
         return {
             "is_same_pass": False
         }
+        
+@users_bp.route("/reset_pass", methods=['POST'])
+def reset_password():
+    
+    json_data = request.get_json()
+    
+    user = User.query.filter_by(username=json_data["username"]).first()
+    
+    if user != None:
+        password = generate_password_hash(json_data['new_pass'])
+        user.password = password
+        save_to_db(user)
+        return {
+            "status": "Success"
+        }
+    else:
+        return {
+            "status": "user_not_found"
+        }
+    
+    

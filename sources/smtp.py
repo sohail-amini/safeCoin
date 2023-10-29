@@ -9,6 +9,12 @@ smtp_bp = Blueprint("smtp", __name__)
 
 
 # Gmail SMTP server details
+# smtp_server = 'smtp.gmail.com'
+# smtp_port = 587
+
+# sender_email = 'sohailbadghisi1@gmail.com'
+# email_password = 'wqkcesfoynwaafnn'
+
 smtp_server = 'smtp.mailgun.org'
 smtp_port = 587
 
@@ -23,6 +29,7 @@ server.starttls()
 
 def send_email_final(receiver_email, message):
     try:
+        
         server.login(sender_email, email_password)
         msg = MIMEMultipart()
         msg['From'] = sender_email
