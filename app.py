@@ -11,8 +11,9 @@ from sources.payments import payment_bp
 from sources.products import product_bp, add_products_to_database
 from sources.invoice import invoice_bp
 from sources.withdraw import withdraw_bp
+from sources.settings import settings_bp, add_settings
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager
 
 load_dotenv()
 app = Flask(__name__)
@@ -32,12 +33,14 @@ app.register_blueprint(product_bp)
 app.register_blueprint(invoice_bp)
 app.register_blueprint(withdraw_bp)
 app.register_blueprint(smtp_bp)
+app.register_blueprint(settings_bp)
 
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
     create_admin_user()
+    add_settings()
     add_products_to_database()
 
 if __name__ == "__main__":

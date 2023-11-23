@@ -6,6 +6,8 @@ import requests
 import uuid
 import os
 from sources.products import Product
+from sources.settings import Settings
+
 from helpers import save_to_db
 
 invoice_bp = Blueprint("invoice", __name__)
@@ -64,9 +66,11 @@ def track_invoice(pk):
 @invoice_bp.route("/create_payment/<int:pk>", methods=["POST"])
 def create_payment(pk):
     product = Product.query.get(pk)
+    settings = Settings.query.get(1)
+
     j_data = request.get_json()
     url = 'https://www.blockonomics.co/api/new_address'
-    headers = {'Authorization': "Bearer " + os.getenv("BLOCKNOMICS_TOKEN")}
+    headers = {'Authorization': "Bearer " + settings.blocknomic_token}
     r = requests.post(url, headers=headers)
     user_info_str = json.dumps(j_data['userInfo'])
     if r.status_code == 200:
