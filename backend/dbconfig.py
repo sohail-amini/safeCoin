@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 def config(app):
     # Define the URI for your SQLite database file.
-    sqlite_uri = "sqlite:///your_database_file.db"
+    sqlite_uri = "sqlite:///safecoin.db"
 
     # Configure the default database URI.
     app.config["SQLALCHEMY_DATABASE_URI"] = sqlite_uri
