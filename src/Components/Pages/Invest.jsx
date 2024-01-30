@@ -25,6 +25,7 @@ export const Invest = (props) => {
   });
   const [loader, setLoader] = useState(false);
   const [isNewPackage, setIsNewPackage] = useState(false);
+  const [currentPrice, setCurrentPrice] = useState(null);
   let info = JSON.parse(localStorage.getItem("usr_info"));
 
   useEffect(() => {
@@ -46,19 +47,26 @@ export const Invest = (props) => {
 
   const updatePackage = async (id) => {
     await axios
-      .put(`${AppSettings.APIserver}/products/${id}`, selectedProduct)
+      .put(`${AppSettings.APIserver}/products/${id}`, {
+        ...selectedProduct,
+        price: +(currentPrice / btcRate.toFixed(6)),
+      })
       .then((res) => {
         setPackages((prevPackages) => {
           return prevPackages.map((item) => {
             if (item.id === id) {
-              return { ...item, ...selectedProduct };
+              return {
+                ...item,
+                ...selectedProduct,
+                price: +(currentPrice / btcRate.toFixed(6)),
+              };
             }
             return item;
           });
         });
         setOpenEditModal(false);
       })
-      .catch(() => console.log("Somethign went wrong!"));
+      .catch(() => console.log("Something went wrong!"));
 
     setLoader(false);
   };
@@ -112,6 +120,8 @@ export const Invest = (props) => {
           setLoader={setLoader}
           isNewPackage={isNewPackage}
           createPackage={createPackage}
+          currentPrice={currentPrice}
+          setCurrentPrice={setCurrentPrice}
         />
       )}
       {loader ? (
@@ -140,7 +150,7 @@ export const Invest = (props) => {
             </div>
           )}
 
-          {userRole === "admin" && (
+          {localStorage.getItem("userRole") === "admin" && (
             <div className="flex sm:flex-col sm:items-end sm:gap-y-2 justify-between items-center">
               <div
                 className="flex items-center p-4 mb-4 text-sm w-2/5 sm:w-full sm:text-xl sm:m-0 sm:mr-2 mt-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
@@ -194,7 +204,7 @@ export const Invest = (props) => {
                   className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                   key={pck.productId}
                 >
-                  {userRole === "admin" && (
+                  {localStorage.getItem("userRole") === "admin" && (
                     <div className="flex justify-between mb-2">
                       <BiEditAlt
                         onClick={() => {
@@ -218,7 +228,11 @@ export const Invest = (props) => {
                     {pck.title}
                   </h5>
                   <b className="dark:text-slate-200 mb-2 block">
-                    Price: {pck.price} BTC
+                    Price: {pck.price.toFixed(5)} BTC ({"$"}
+                    {(pck.price * btcRate).toLocaleString("en-US", {
+                      maximumFractionDigits: 1,
+                    })}
+                    )
                   </b>
                   <span
                     className={`my-2 ${labelBgColor}  text-blue-800 text-sm font-medium mr-2 py-2 px-4 rounded dark:bg-blue-900 dark:text-blue-300`}

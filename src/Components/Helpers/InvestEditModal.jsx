@@ -1,4 +1,7 @@
+import { useContext, useEffect } from "react";
 import { Spinner } from "flowbite-react";
+import { GlobalContext } from "../../App";
+
 export function EditModal({
   loader,
   setLoader,
@@ -8,7 +11,15 @@ export function EditModal({
   updatePackage,
   isNewPackage,
   createPackage,
+  currentPrice,
+  setCurrentPrice,
 }) {
+  const { btcRate } = useContext(GlobalContext);
+
+  useEffect(() => {
+    setCurrentPrice((selectedProduct.price * btcRate).toFixed(2));
+  }, []);
+
   return (
     <div class="fixed top-0 left-0 right-0 z-50 w-full justify-center flex items-center p-4 m-auto bg-themask overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
       <div class="relative max-h-full w-2/5 sm:w-full">
@@ -83,13 +94,8 @@ export function EditModal({
               Product Price
             </label>
             <input
-              value={selectedProduct.price}
-              onChange={(e) =>
-                setSelectedProduct({
-                  ...selectedProduct,
-                  price: e.target.value,
-                })
-              }
+              value={currentPrice}
+              onChange={(e) => setCurrentPrice(e.target.value)}
               type="number"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
@@ -153,10 +159,9 @@ export function EditModal({
             <button
               onClick={() => {
                 setLoader(true);
-                console.log(isNewPackage);
                 if (isNewPackage) {
                   createPackage();
-                } else updatePackage(selectedProduct.product_id);
+                } else updatePackage(selectedProduct.id);
               }}
               type="button"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

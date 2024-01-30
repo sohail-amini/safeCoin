@@ -9,7 +9,7 @@ export const Deposite = () => {
   const location = useLocation();
   const [depositeInfo, setDepositeInfo] = useState({});
   const { loader, userinfo, setLoader } = useContext(GlobalContext);
-  const [status, setStatus] = useState("Confirmed");
+  const [status, setStatus] = useState("Pending");
 
   const [error, setError] = useState(false);
 

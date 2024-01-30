@@ -153,7 +153,11 @@ export const Transfer = () => {
             <span className="font-base"> Balance:</span> ₿{""}
             {balance.toLocaleString()}
             {""}
-            <b className="ml-1">{`($${(balance * btcRate).toFixed(2)})`} </b>
+            <b className="ml-1">
+              {`($${(balance * btcRate).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              })})`}{" "}
+            </b>
           </div>
 
           {balance === 0 && (

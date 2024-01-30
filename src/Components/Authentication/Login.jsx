@@ -32,7 +32,7 @@ export const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           setUserRole(res.data.user_role);
-
+          localStorage.setItem("userRole", res.data.user_role);
           const { username, id, token, account_type, email } = res.data;
           let user_info = {
             username,
@@ -120,9 +120,12 @@ export const Login = () => {
             <Checkbox id="remember" />
             <Label htmlFor="remember">Remember me</Label>
           </div>
-          <a href="#" className="text-sm text-[#155E75]">
-            Forgot password
-          </a>
+          <button
+            onClick={() => navigate("/forgot_pass")}
+            className="text-sm text-cyan-100"
+          >
+            Forgot password?
+          </button>
         </div>
         <div className="flex justify-center w-full">
           <ReCAPTCHA

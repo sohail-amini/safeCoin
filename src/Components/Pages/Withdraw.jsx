@@ -165,7 +165,9 @@ export const Withdraw = () => {
           </h1>
           <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 sm:w-full text-center font-bold">
             Balance: ₿{balance.toLocaleString()}{" "}
-            {`($${(balance * btcRate).toFixed(to_fixed)})`}
+            {`($${(balance * btcRate).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+            })})`}
           </h2>
           {balance === 0 && (
             <div

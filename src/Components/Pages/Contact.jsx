@@ -20,33 +20,15 @@ export const Contact = () => {
     await axios
       .post(`${AppSettings.APIserver}/send_email`, contactData)
       .then((res) => {
-        if (res.status === 200) {
+        if (res.data.status === "success") {
           setLoader(false);
           toast.success("You message sent!");
-        }
+        } else toast.error("Something went wrong!");
       })
       .catch((e) => {
-        setLoader(false);
         toast.error("Something went wrong!");
       });
-    // emailjs
-    //   .sendForm(
-    //     "service_1azd8a6",
-    //     "template_07tlqjx",
-    //     form.current,
-    //     "mpLYLSwYxQqYYhME9"
-    //   )
-    //   .then(
-    //     (result) => {
-    //       setLoader(false);
-    //       toast.success("You message sent!");
-    //     },
-    //     (error) => {
-    //       toast.error("Something went wrong!");
-    //       setLoader(false);
-    //       console.log(error.text);
-    //     }
-    //   );
+    setLoader(false);
 
     setContactData({
       name: "",

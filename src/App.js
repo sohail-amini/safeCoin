@@ -3,6 +3,7 @@ import "./App.css";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Login } from "./Components/Authentication/Login";
 import { Signup } from "./Components/Authentication/Signup";
+import { ForgotPassword } from "./Components/Authentication/ForgotPassword";
 import { HomeWrapper } from "./Components/Main/Home";
 import { Loader } from "./Components/Helpers/Loader";
 import AppSettings from "./app.settings.json";
@@ -186,6 +187,7 @@ function App() {
             />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot_pass" element={<ForgotPassword />} />
           </Routes>
         )}
       </GlobalContext.Provider>
