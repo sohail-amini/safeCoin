@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.a39b7057.css",
-    "main.js": "/static/js/main.7e60b411.js",
+    "main.css": "/static/css/main.74e909a7.css",
+    "main.js": "/static/js/main.fbd5b4a6.js",
     "static/media/hex-textured-background-networking.jpg": "/static/media/hex-textured-background-networking.bf47fef090d388728391.jpg",
     "static/media/bitpay.PNG": "/static/media/bitpay.f8633632d52a3b356b78.PNG",
     "static/media/binance.PNG": "/static/media/binance.92643887cb735977d3b9.PNG",
@@ -10,11 +10,11 @@
     "static/media/user.png": "/static/media/user.ed91b13df0e6e96294c4.png",
     "static/media/okx.PNG": "/static/media/okx.9202ecf8c466d43986a9.PNG",
     "index.html": "/index.html",
-    "main.a39b7057.css.map": "/static/css/main.a39b7057.css.map",
-    "main.7e60b411.js.map": "/static/js/main.7e60b411.js.map"
+    "main.74e909a7.css.map": "/static/css/main.74e909a7.css.map",
+    "main.fbd5b4a6.js.map": "/static/js/main.fbd5b4a6.js.map"
   },
   "entrypoints": [
-    "static/css/main.a39b7057.css",
-    "static/js/main.7e60b411.js"
+    "static/css/main.74e909a7.css",
+    "static/js/main.fbd5b4a6.js"
   ]
 }
