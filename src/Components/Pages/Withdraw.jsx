@@ -8,10 +8,6 @@ import AppSettings from "../../app.settings.json";
 export const Withdraw = () => {
   const { balance, btcRate, setBalance } = useContext(GlobalContext);
 
-  useEffect(() => {
-    console.log("Balance", balance);
-  }, [balance]);
-
   let info = JSON.parse(localStorage.getItem("usr_info"));
 
   const [values, setValues] = useState({
@@ -72,79 +68,90 @@ export const Withdraw = () => {
 
     setLoader(true);
 
-    if (checkNumber(amount)) {
+    setTimeout(() => {
+      setLoader(false);
       setWithdrawalPopup({
         show: true,
         status: "failed",
-        status_code: "wrong_amount",
+        status_code: "not_subscribed",
       });
-    }
-    if (info.username === "admin") {
-      setTimeout(() => {
-        setWithdrawalPopup({
-          show: true,
-          status: "failed",
-        });
-        setLoader(false);
-      }, 3000);
-    } else if (info.username !== "admin" && converted > balance) {
-      setTimeout(() => {
-        setWithdrawalPopup({
-          show: true,
-          status: "failed",
-          status_code: "max_amount",
-        });
-        setLoader(false);
-      }, 3000);
-    } else {
-      await axios
-        .post(`${AppSettings.APIserver}/create_withdraw`, {
-          ...values,
-          sender: info.username,
-          email: info.email,
-          amount: converted,
-        })
-        .then((res) => {
-          console.log(res);
-          if (res.data.message === "wrong_pin") {
-            setWithdrawalPopup({
-              show: true,
-              status: "failed",
-              status_code: "wrong_pin",
-            });
-            setLoader(false);
-          } else if (res.data.key === "max_amount") {
-            setWithdrawalPopup({
-              show: true,
-              status: "failed",
-              status_code: "max_amount_reached",
-            });
-            setLoader(false);
-          } else {
-            setTimeout(() => {
-              setWithdrawalPopup({
-                show: true,
-                status: "success",
-              });
-              setValues({
-                wallet_address: "",
-                amount: null,
-                secret_key: "",
-              });
-              setLoader(false);
-              setBalance(res.data.balance);
-            }, 2000);
-          }
-        })
-        .catch((e) => {
-          setLoader(false);
-          setValues({
-            wallet_address: "",
-            amount: null,
-            secret_key: "",
-          });
-        });
-    }
+    }, 3000);
+    // if (true) {
+
+    // }
+
+    // if (checkNumber(amount)) {
+    //   setWithdrawalPopup({
+    //     show: true,
+    //     status: "failed",
+    //     status_code: "wrong_amount",
+    //   });
+    // }
+    // if (info.username === "admin") {
+    //   setTimeout(() => {
+    //     setWithdrawalPopup({
+    //       show: true,
+    //       status: "failed",
+    //     });
+    //     setLoader(false);
+    //   }, 3000);
+    // } else if (info.username !== "admin" && converted > balance) {
+    //   setTimeout(() => {
+    //     setWithdrawalPopup({
+    //       show: true,
+    //       status: "failed",
+    //       status_code: "max_amount",
+    //     });
+    //     setLoader(false);
+    //   }, 3000);
+    // } else {
+    //   await axios
+    //     .post(`${AppSettings.APIserver}/create_withdraw`, {
+    //       ...values,
+    //       sender: info.username,
+    //       email: info.email,
+    //       amount: converted,
+    //     })
+    //     .then((res) => {
+    //       if (res.data.message === "wrong_pin") {
+    //         setWithdrawalPopup({
+    //           show: true,
+    //           status: "failed",
+    //           status_code: "wrong_pin",
+    //         });
+    //         setLoader(false);
+    //       } else if (res.data.key === "max_amount") {
+    //         setWithdrawalPopup({
+    //           show: true,
+    //           status: "failed",
+    //           status_code: "max_amount_reached",
+    //         });
+    //         setLoader(false);
+    //       } else {
+    //         setTimeout(() => {
+    //           setWithdrawalPopup({
+    //             show: true,
+    //             status: "success",
+    //           });
+    //           setValues({
+    //             wallet_address: "",
+    //             amount: null,
+    //             secret_key: "",
+    //           });
+    //           setLoader(false);
+    //           setBalance(res.data.balance);
+    //         }, 2000);
+    //       }
+    //     })
+    //     .catch((e) => {
+    //       setLoader(false);
+    //       setValues({
+    //         wallet_address: "",
+    //         amount: null,
+    //         secret_key: "",
+    //       });
+    //     });
+    // }
   };
 
   function show12Characters(inputString) {
@@ -184,7 +191,7 @@ export const Withdraw = () => {
               className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               for="username"
             >
-              Bitcoin Wallet Address
+              USDT Address
             </label>
             <input
               color="gray"

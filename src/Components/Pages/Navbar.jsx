@@ -203,7 +203,7 @@ export const HomeNavbar = (props) => {
                   class="block px-4 font-bold py-2 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Balance:{" "}
-                  {`₿${balance.toLocaleString()} ($${(
+                  {`₿${balance?.toLocaleString()} ($${(
                     balance * btcRate
                   ).toFixed(2)})`}
                 </span>

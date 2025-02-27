@@ -15,13 +15,13 @@ export const Login = () => {
     username: "",
     password: "",
   });
-  const [isBot, setIsBot] = useState(true);
+  // const [isBot, setIsBot] = useState(true);
 
-  const onVerify = (token) => {
-    if (token) {
-      setIsBot(false);
-    }
-  };
+  // const onVerify = (token) => {
+  //   if (token) {
+  //     setIsBot(false);
+  //   }
+  // };
 
   const navigate = useNavigate();
   const login = async (e) => {
@@ -120,20 +120,20 @@ export const Login = () => {
             <Checkbox id="remember" />
             <Label htmlFor="remember">Remember me</Label>
           </div>
-          <button
+          <span
             onClick={() => navigate("/forgot_pass")}
             className="text-sm text-cyan-100"
           >
             Forgot password?
-          </button>
+          </span>
         </div>
-        <div className="flex justify-center w-full">
+        {/* <div className="flex justify-center w-full">
           <ReCAPTCHA
             sitekey="6LcLuDInAAAAAM6NUcZOCaACCzfPQp6dPjUu454s"
             onChange={onVerify}
           />
-        </div>
-        <Button type="submit" disabled={isBot || loader}>
+        </div> */}
+        <Button type="submit" disabled={loader}>
           {!loader ? (
             <span>Login</span>
           ) : (

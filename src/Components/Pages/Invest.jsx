@@ -262,6 +262,7 @@ export const Invest = (props) => {
                           last_route: "invest",
                           productId: pck.id,
                           productPrice: pck.price,
+                          btcRate,
                         },
                       })
                     }

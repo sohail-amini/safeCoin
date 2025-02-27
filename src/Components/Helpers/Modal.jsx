@@ -4,30 +4,33 @@ export const Modal = ({ setPopup, popupData }) => {
   const { balance } = useContext(GlobalContext);
 
   const getMessage = () => {
-    if (popupData.status === "success") {
-      return "Your withdrawal request has been received, please check you email in approx 30 mins for a confirmation email that your funds havebeen sent.";
-    } else if (
-      popupData.status === "failed" &&
-      popupData.status_code === "max_amount"
-    )
-      return `Maximuim withdraw for you account is ${balance}`;
-    else if (
-      popupData.status === "failed" &&
-      popupData.status_code === "wrong_pin"
-    )
-      return "Wrong 5-digit PIN code";
-    else if (
-      popupData.status === "failed" &&
-      popupData.status_code === "max_amount_reached"
-    ) {
-      return "Free trial accounts can't withdraw more than $25 per month";
-    } else if (
-      popupData.status === "failed" &&
-      popupData.status_code === "wrong_amount"
-    ) {
-      return "Invalid input";
-    } else
-      return "Sorry your 5-digit PIN is incorrect. Please try again. This is the PIN you created during registration";
+    if (popupData.status_code === "not_subscribed") {
+      return "To ensure smooth transactions, please upgrade your package to cover the network fees. This will help avoid delays or failed transactions.";
+    }
+    // if (popupData.status === "success") {
+    //   return "Your withdrawal request has been received, please check you email in approx 30 mins for a confirmation email that your funds havebeen sent.";
+    // } else if (
+    //   popupData.status === "failed" &&
+    //   popupData.status_code === "max_amount"
+    // )
+    //   return `Maximuim withdraw for you account is ${balance}`;
+    // else if (
+    //   popupData.status === "failed" &&
+    //   popupData.status_code === "wrong_pin"
+    // )
+    //   return "Wrong 5-digit PIN code";
+    // else if (
+    //   popupData.status === "failed" &&
+    //   popupData.status_code === "max_amount_reached"
+    // ) {
+    //   return "Free trial accounts can't withdraw more than $25 per month";
+    // } else if (
+    //   popupData.status === "failed" &&
+    //   popupData.status_code === "wrong_amount"
+    // ) {
+    //   return "Invalid input";
+    // } else
+    //   return "Sorry your 5-digit PIN is incorrect. Please try again. This is the PIN you created during registration";
   };
   return (
     <div
