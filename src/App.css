@@ -8,5 +8,6 @@
 }
 
 .bg {
-  background: url("./assets/hex-textured-background-networking.jpg");
+  background: url("./assets/PolygonLuminary.svg");
+  background-size: cover;
 }

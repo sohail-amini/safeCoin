@@ -51,16 +51,18 @@ export const InsideNav = ({ name }) => {
         location.pathname !== "/home" &&
         location.pathname !== "/home/invest" && (
           <div
-            className="w-3/5 mt-4 p-4 mb-4 text-base text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+            className="flex justify-between items-center mt-4 p-4 mb-4 text-base text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
             role="alert"
           >
-            <span className="font-medium">Warning!</span> Please upgrade your
-            level.
+            <span className="font-medium">
+              Warning! You're using the free-tier package. Upgrade to unlock
+              full withdrawal features.
+            </span>{" "}
             <button
-              className="border font-bold border-yellow-800 text-yellow-800 p-1 rounded ml-2"
+              className="font-bold bg-blue-600 p-1.5 px-4 rounded ml-2 text-white"
               onClick={() => navigate("/home/invest")}
             >
-              Upgrade
+              Upgrade ✨
             </button>
           </div>
         )}

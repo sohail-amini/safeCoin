@@ -3,11 +3,13 @@ import { GlobalContext } from "../../App";
 import { Modal } from "../Helpers/Modal";
 import { Spinner } from "flowbite-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import AppSettings from "../../app.settings.json";
 
 export const Withdraw = () => {
-  const { balance, btcRate, setBalance } = useContext(GlobalContext);
+  const { balance, btcRate, pendingTransfer } = useContext(GlobalContext);
 
+  const navigate = useNavigate();
   let info = JSON.parse(localStorage.getItem("usr_info"));
 
   const [values, setValues] = useState({
@@ -170,6 +172,23 @@ export const Withdraw = () => {
           <h1 className="text-2xl mb-4 font-bold leading-12 text-gray-600 dark:text-gray-100">
             New withdrawal
           </h1>
+          {pendingTransfer && (
+            <div
+              className="w-4/5 mt-4 p-2 px-4 flex flex-row justify-between items-center mb-4 text-base rounded-lg  dark:bg-gray-700 dark:text-slate-100"
+              role="alert"
+            >
+              <span className="font-medium w-4/5">
+                Warning! You're using the free-tier package. Upgrade to unlock
+                full withdrawal features.
+              </span>
+              <button
+                className="font-bold bg-blue-600 p-2 px-4 block rounded ml-2 text-white"
+                onClick={() => navigate("/home/invest")}
+              >
+                Upgrade ✨
+              </button>
+            </div>
+          )}
           <h2 className="bg-green-100 dark:bg-green-300 p-2 text-green-900 rounded mb-2 w-2/4 sm:w-full text-center font-bold">
             Balance: ₿{balance.toLocaleString()}{" "}
             {`($${(balance * btcRate).toLocaleString(undefined, {

@@ -183,7 +183,10 @@ export const Transfer = () => {
               value={transferInfo.receiver}
               onChange={(e) => {
                 setUserNotFound(false);
-                setTransferInfo({ ...transferInfo, receiver: e.target.value });
+                setTransferInfo({
+                  ...transferInfo,
+                  receiver: e.target.value.toLowerCase(),
+                });
               }}
               type="text"
               id="password"

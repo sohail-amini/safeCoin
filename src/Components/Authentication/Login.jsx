@@ -6,6 +6,7 @@ import axios from "axios";
 import { Toast } from "../Helpers/Toast";
 import { GlobalContext } from "../../App";
 import ReCAPTCHA from "react-google-recaptcha";
+import { HiEye, HiEyeOff } from "react-icons/hi"; // Import eye icons
 
 export const Login = () => {
   const { setPendingTransfer, setPendingTransferInfo, setToast, setUserRole } =
@@ -78,6 +79,11 @@ export const Login = () => {
       });
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <div className="flex justify-center items-center bg-gray-100 dark:bg-gray-600 h-screen bg">
       <Toast left="left-10" top="top-10" />
@@ -105,15 +111,28 @@ export const Login = () => {
           <div className="mb-2 block">
             <Label htmlFor="password1" value="Your password" />
           </div>
-          <TextInput
-            id="password1"
-            required
-            type="password"
-            value={userData.password}
-            onChange={(e) =>
-              setUserData({ ...userData, password: e.target.value })
-            }
-          />
+          <div className="relative">
+            <TextInput
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={userData.password}
+              onChange={(e) =>
+                setUserData({ ...userData, password: e.target.value })
+              }
+            />
+            <Button
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 top-1"
+              color="white"
+            >
+              {showPassword ? (
+                <HiEyeOff color="white" />
+              ) : (
+                <HiEye color="white" />
+              )}{" "}
+              {/* Toggle between eye icons */}
+            </Button>
+          </div>
         </div>
         <div className="flex items-center justify-between ">
           <div className="flex items-center gap-2">

@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.74e909a7.css",
-    "main.js": "/static/js/main.fbd5b4a6.js",
+    "main.js": "/static/js/main.7607a63a.js",
     "static/media/hex-textured-background-networking.jpg": "/static/media/hex-textured-background-networking.bf47fef090d388728391.jpg",
     "static/media/bitpay.PNG": "/static/media/bitpay.f8633632d52a3b356b78.PNG",
     "static/media/binance.PNG": "/static/media/binance.92643887cb735977d3b9.PNG",
@@ -11,10 +11,10 @@
     "static/media/okx.PNG": "/static/media/okx.9202ecf8c466d43986a9.PNG",
     "index.html": "/index.html",
     "main.74e909a7.css.map": "/static/css/main.74e909a7.css.map",
-    "main.fbd5b4a6.js.map": "/static/js/main.fbd5b4a6.js.map"
+    "main.7607a63a.js.map": "/static/js/main.7607a63a.js.map"
   },
   "entrypoints": [
     "static/css/main.74e909a7.css",
-    "static/js/main.fbd5b4a6.js"
+    "static/js/main.7607a63a.js"
   ]
 }

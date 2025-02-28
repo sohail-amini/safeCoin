@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Navbar } from "flowbite-react";
 import AppSettings from "../../app.settings.json";
 import userProfile from "../../assets/user.png";
@@ -18,6 +18,27 @@ export const HomeNavbar = (props) => {
     localStorage.getItem("color-theme") === "light" ? true : false
   );
   const navigate = useNavigate();
+
+  const dropdownRef = useRef(null);
+  const userIconRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        userIconRef.current &&
+        !userIconRef.current.contains(event.target)
+      ) {
+        setShowProfile(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     let info = JSON.parse(localStorage.getItem("usr_info"));
@@ -156,9 +177,10 @@ export const HomeNavbar = (props) => {
         </button>
 
         <img
+          ref={userIconRef}
           onClick={() => setShowProfile(!showProfile)}
           type="button"
-          class="w-10 h-10 sm:h-9 sm:w-9 rounded-full cursor-pointer"
+          class="w-10 h-10 sm:h-9 sm:w-9 rounded-full cursor-pointer profile"
           src={userProfile}
           alt="User dropdown"
         />
@@ -185,8 +207,9 @@ export const HomeNavbar = (props) => {
 
         {showProfile && (
           <div
+            ref={dropdownRef}
             id="userDropdown"
-            class="z-10 absolute top-16 divide-y divide-gray-100 bg-gray-50 border border-gray-200 dark:border-gray-700 rounded-lg shadow w-60 dark:bg-gray-800 dark:divide-gray-600"
+            class="dropdown-list z-10 absolute top-16 divide-y divide-gray-100 bg-gray-50 border border-gray-200 dark:border-gray-700 rounded-lg shadow w-60 dark:bg-gray-800 dark:divide-gray-600"
           >
             <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
               <div class="font-medium text-md truncate">
