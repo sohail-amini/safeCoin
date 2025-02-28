@@ -20,7 +20,7 @@ export const Transfer = () => {
 
   const [transfers, setTransfers] = useState([]);
 
-  let to_fixed = balance.toString().length > 6 ? 4 : 6;
+  let to_fixed = balance?.toString().length > 6 ? 4 : 6;
   if (balance === 0) to_fixed = 0;
 
   const fetch_all_transfer = async () => {
